@@ -323,21 +323,24 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <div class="opt"><input type="checkbox" id="o-rain"><label for="o-rain" class="grow">Zonas con posible lluvia</label></div>
       <p class="sub" id="rain-note" hidden></p>
       <div class="opt"><input type="checkbox" id="o-radar"><label for="o-radar" class="grow">Radar de lluvia real (últimas 2 h)</label></div>
+      <div class="opt" id="radar-a-row" style="padding-left:25px" hidden><label for="o-radar-a" style="color:var(--ink-2)">Intensidad</label><input type="range" id="o-radar-a" min="30" max="100" step="5" style="flex:1"></div>
       <p class="sub" id="radar-note" hidden></p>
       <div class="opt"><input type="checkbox" id="o-sat"><label for="o-sat" class="grow">Foto de satélite real (NASA, día elegido)</label></div>
       <p class="sub" id="sat-note" hidden></p>
+      <div class="opt"><input type="checkbox" id="o-eum"><label for="o-eum" class="grow">Satélite europeo Meteosat (cada 10 min)</label></div>
+      <p class="sub" id="eum-note" hidden></p>
     </section>
 
     <footer class="foot">
       <div class="l-es">
       <p><b>Cómo se calcula.</b> El Sol sale de un modelo astronómico (error &lt; 0,3° frente a la referencia NREL). Las sombras se calculan sobre un modelo digital del terreno de 30–60 m: solo el relieve; no incluyen vegetación ni edificios. El mapa de sombras no aplica la curvatura terrestre; el motivo y la línea de visión sí.</p>
       <p>La luz y el cielo son estimaciones orientativas, no una garantía de resultado.</p>
-      <p>Datos: relieve <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a> (AWS) · meteorología <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0) · mapas OpenTopoMap y Esri (satélite y callejero) · búsqueda Nominatim · radar RainViewer · satélite NASA GIBS.</p>
+      <p>Datos: relieve <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a> (AWS) · meteorología <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0) · mapas OpenTopoMap y Esri (satélite y callejero) · búsqueda Nominatim · radar RainViewer · satélite NASA GIBS y EUMETSAT.</p>
     </div>
       <div class="l-en">
       <p><b>How it is calculated.</b> The Sun comes from an astronomical model (error &lt; 0.3° against the NREL reference). Shadows are computed on a 30–60 m digital terrain model: terrain only; vegetation and buildings are not included. The shadow map does not apply Earth curvature; the subject and the line of sight do.</p>
       <p>The light and the sky are indicative estimates, not a guarantee of results.</p>
-      <p>Data: terrain <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a> (AWS) · weather <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0) · maps OpenTopoMap and Esri (satellite and streets) · search Nominatim · radar RainViewer · satellite NASA GIBS.</p>
+      <p>Data: terrain <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a> (AWS) · weather <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0) · maps OpenTopoMap and Esri (satellite and streets) · search Nominatim · radar RainViewer · satellite NASA GIBS and EUMETSAT.</p>
     </div>
     </footer>
   </aside>
@@ -412,7 +415,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li><b>Leer el panel.</b> <i>Luz estimada</i> resume la calidad de la luz sobre el motivo y cómo la verás desde tu posición (a favor, en contra o de lado). <i>Meteorología</i> da nubes por altura, viento, precipitación y visibilidad. <i>Sol</i> da acimut, altura y horas clave. <i>Vista desde la posición</i> dice si el relieve tapa el motivo.</li>
       <li><b>Vista 2D / 3D.</b> El conmutador está arriba a la izquierda del mapa. En 3D, el control «Inclinación» fija el ángulo; también se inclina con el botón derecho del ratón arrastrando arriba o abajo (o Ctrl + arrastrar). «Ver desde la posición» pone la cámara en tu posición mirando al motivo; Esc o «Volver al mapa» regresa.</li>
       <li><b>Rotar el mapa</b> (en 2D y en 3D). Usa el control «Orientación», el botón derecho del ratón arrastrando hacia los lados (o Ctrl + arrastrar), o dos dedos en pantalla táctil. «Norte arriba» lo reorienta y «Mirar al motivo» lo gira hacia la dirección posición → motivo.</li>
-      <li><b>Capas del mapa.</b> Mapa base (relieve, satélite, callejero), sombras de la orografía con su intensidad, relieve sombreado con el Sol actual, líneas del Sol, nubes y zonas con posible lluvia. Cada capa se activa y desactiva con su casilla.</li>
+      <li><b>Capas del mapa.</b> Mapa base (relieve, satélite, callejero), sombras de la orografía con su intensidad, relieve sombreado con el Sol actual, líneas del Sol, nubes, zonas con posible lluvia, radar de lluvia real, foto de satélite real y satélite europeo. Cada capa se activa y desactiva con su casilla.</li>
     </ol>
 
     <h3>Qué significa cada elemento del mapa</h3>
@@ -427,15 +430,16 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>«Líneas del Sol, encuadre y visual», en «Capas del mapa», muestra u oculta el círculo y las tres líneas a la vez.</li>
     </ul>
 
-    <h3>Capas de nubes y lluvia</h3>
+    <h3>Capas de nubes, lluvia y satélite</h3>
     <ul>
-      <li><b>Empiezan desactivadas</b> y no se recuerdan entre sesiones: tú las activas cuando las quieras. Mientras estén desactivadas no se consulta la previsión de la zona.</li>
+      <li><b>Hay cinco capas y todas empiezan desactivadas</b> (no se recuerdan entre sesiones): tú las activas cuando las quieras. Dos son <b>previsión</b> (nubes y lluvia posible) y tres son <b>observación real</b> (radar de lluvia, foto de satélite de la NASA y satélite europeo). Mientras una esté desactivada no se consulta su servicio.</li>
       <li><b>Nubes.</b> La cantidad dibujada es proporcional al porcentaje de nubosidad previsto: con un 30 % se cubre en torno al 30 % del área, con un 90 %, casi todo. Las nubes altas se ven más finas y las bajas y medias más densas. Si no se prevén nubes, la capa queda vacía. El porcentaje es el de la previsión, pero la <b>forma</b> de las manchas es ilustrativa: es un dibujo fijo anclado al terreno, que no cambia al acercar o alejar el mapa (solo se afina con más detalle al acercarte).</li>
       <li><b>Lluvia posible.</b> Las manchas ocupan una extensión parecida a la probabilidad de precipitación (por debajo del 10 % no se dibuja nada) y su color indica la intensidad prevista, de azul claro (débil) a violeta (fuerte). Para fechas pasadas, que no tienen probabilidad, se usa la precipitación registrada. La forma de las manchas también es ilustrativa.</li>
-      <li><b>Radar de lluvia real</b> (solo para la fecha de hoy). Dibuja la lluvia que están midiendo los radares meteorológicos en el fotograma más cercano a la hora elegida (hay uno cada 10 minutos, de las últimas ~2 horas). Es una observación, no una previsión, y se ve igual a cualquier escala. No hay datos sobre el océano ni donde no hay radar.</li>
-      <li><b>Foto de satélite real</b> (cualquier día desde julio de 2002 hasta hoy). Muestra la imagen en color real del satélite MODIS de la NASA para el día elegido (Terra antes de las 12:30, Aqua después). Es <b>una sola pasada al día</b> (hacia las 10:30 o las 13:30 hora solar), no la hora exacta que hayas elegido, y puede tener huecos entre pasadas. No es instantánea: para ver las nubes de otro momento del día no hay datos libres globales sin clave.</li>
-      <li><b>Cambian con la hora</b> del control deslizante y se desplazan con el viento.</li>
-      <li><b>Rejilla de previsión.</b> Los datos salen de una rejilla de puntos que se adapta al zoom: de unos 16 a 144 puntos, separados 5, 10, 20, 40, 80 o 160 km (más finos cuanto más te acercas); la rejilla incluye una celda de margen alrededor de la vista, así que pequeños desplazamientos del mapa no necesitan datos nuevos. Bajo cada casilla se indica la rejilla en uso. Se ven desde un valle hasta toda la Península; con la vista más amplia de unos 1 300 km se ocultan.</li>
+      <li><b>Radar de lluvia real</b> (solo para la fecha de hoy). Dibuja la lluvia que están midiendo los radares meteorológicos en el fotograma más cercano a la hora elegida (hay uno cada 10 minutos, de las últimas ~2 horas). Es una observación, no una previsión, y se ve igual a cualquier escala. No hay datos sobre el océano ni donde no hay radar. Su control «Intensidad» regula la opacidad (se recuerda).</li>
+      <li><b>Foto de satélite real</b> (cualquier día desde julio de 2002 hasta hoy). Muestra la imagen en color real del satélite MODIS de la NASA para el día elegido (Terra antes de las 12:30, Aqua después). Es <b>una sola pasada al día</b> (hacia las 10:30 o las 13:30 hora solar), no la hora exacta que hayas elegido, y puede tener huecos entre pasadas. No es instantánea: para ver las nubes de otro momento del día en Europa usa el satélite europeo.</li>
+      <li><b>Satélite europeo Meteosat</b> (desde finales de septiembre de 2024 hasta hoy). Imagen del satélite Meteosat de tercera generación de EUMETSAT, <b>cada 10 minutos</b>: la más cercana a la hora elegida, en color real de día y en infrarrojo de noche. Cubre Europa, África y el Atlántico. Al activarla la app pregunta a EUMETSAT qué horas hay disponibles; si el servicio no responde o el navegador lo bloquea, la nota bajo la casilla lo indica.</li>
+      <li><b>Con la hora.</b> Las de previsión cambian con el control deslizante y se desplazan con el viento. El radar y el satélite europeo muestran el fotograma disponible más cercano a la hora elegida; la foto de la NASA es la del día elegido. Las capas reales no se pueden mostrar para días futuros.</li>
+      <li><b>Rejilla de previsión</b> (solo nubes y lluvia posible). Los datos salen de una rejilla de puntos que se adapta al zoom: de unos 16 a 144 puntos, separados 5, 10, 20, 40, 80 o 160 km (más finos cuanto más te acercas); la rejilla incluye una celda de margen alrededor de la vista, así que pequeños desplazamientos del mapa no necesitan datos nuevos. Bajo cada casilla se indica la rejilla en uso. Se ven desde un valle hasta toda la Península; con la vista más amplia de unos 1 300 km se ocultan.</li>
     </ul>
 
     <h3>Atajos y trucos</h3>
@@ -458,6 +462,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
         <tr><td><b>Búsqueda de lugares</b></td><td><a href="https://nominatim.org/" target="_blank" rel="noopener">Nominatim</a> (OpenStreetMap), en todo el mundo; si falla, <a href="https://photon.komoot.io/" target="_blank" rel="noopener">Photon</a> (Komoot, también con datos de OpenStreetMap). Ambos son gratuitos y no piden clave.</td><td>Ir a una ciudad, comarca, región, sierra, pico, río… de cualquier país por su nombre.</td></tr>
         <tr><td><b>Radar de lluvia</b></td><td><a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>, mosaico mundial de radares meteorológicos (<code>api.rainviewer.com</code>), fotogramas de las últimas ~2 h. Solo se consulta si activas la capa.</td><td>Ver la lluvia que está cayendo ahora (capa «Radar de lluvia real»).</td></tr>
         <tr><td><b>Foto de satélite</b></td><td><a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a> (<code>gibs.earthdata.nasa.gov</code>), imagen MODIS en color real de Terra y Aqua, desde julio de 2002. Solo se consulta si activas la capa.</td><td>Ver las nubes reales de un día concreto (capa «Foto de satélite real»); una pasada al día.</td></tr>
+        <tr><td><b>Satélite europeo</b></td><td><a href="https://www.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a>, servicio EUMETView (<code>view.eumetsat.int</code>): Meteosat de tercera generación, color real e infrarrojo cada 10 min, desde septiembre de 2024. Datos CC BY 4.0: «Contains modified EUMETSAT Meteosat data». Solo se consulta si activas la capa.</td><td>Ver las nubes reales a la hora elegida sobre Europa y el Atlántico (capa «Satélite europeo Meteosat»).</td></tr>
       </tbody>
     </table>
 
@@ -477,7 +482,9 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     <ul>
       <li>Open-Meteo cuenta cada punto de la rejilla como una consulta, con límites orientativos de 600 por minuto, 5 000 por hora y 10 000 al día en el plan gratuito. Para no agotarlos, la aplicación guarda en memoria cada punto ya consultado (al mover el mapa solo pide los nuevos), agrupa las peticiones (hasta 100 puntos por petición) y se impone un tope de unos 2 500 puntos por hora y 400 por minuto, que recuerda aunque recargues la página.</li>
       <li>Si se alcanza el tope, o el servicio responde que hay demasiadas peticiones, las capas se pausan unos minutos y lo avisan bajo la casilla; se reanudan solas.</li>
-      <li>El navegador también guarda localmente tus puntos, el radio y las opciones de capas (salvo nubes y lluvia).</li>
+      <li>El radar de RainViewer permite unas 100 peticiones por minuto y dirección IP: la app pide teselas grandes (512 px) para no acercarse a ese límite, pero con mucho zoom o desplazamientos rápidos el radar puede pausarse unos segundos.</li>
+      <li>La foto de satélite de la NASA y el satélite europeo de EUMETSAT se piden solo si activas su casilla, y cada una descarga únicamente las teselas visibles. Si un servicio no responde, o el navegador no le permite contestar, la nota bajo la casilla lo indica; basta desmarcar y volver a marcar para reintentarlo.</li>
+      <li>El navegador también guarda localmente tus puntos, el radio, la intensidad de las sombras y del radar, las opciones de las capas de sombras, relieve y líneas (no las cinco de nubes, lluvia y satélite) y tu idioma.</li>
     </ul>
 
     <h3>Límites que conviene conocer</h3>
@@ -485,6 +492,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>Fuera de España todo funciona (relieve, mapas y previsión son globales), pero está menos probado: comprueba que la hora local y el amanecer coinciden con lo que esperas. En latitudes polares el Sol puede no salir o no ponerse y algunas horas no existen.</li>
       <li>Las sombras son solo del relieve (modelo de 30–60 m): no incluyen árboles, edificios ni rocas pequeñas. El mapa de sombras no aplica la curvatura terrestre; el perfil de visibilidad sí.</li>
       <li>La <b>cantidad</b> de nubes y la probabilidad de lluvia salen de la previsión, pero la <b>forma</b> de las manchas es ilustrativa: la previsión no dice dónde está cada nube. Las nubes se dibujan planas sobre el terreno, no a su altura real.</li>
+      <li><b>Radar y satélites.</b> El radar solo cubre las últimas ~2 horas (fecha de hoy) y no tiene datos sobre el océano ni donde no hay radar; su paleta de colores la fija el servicio. La foto de la NASA es una sola pasada al día (hacia las 10:30 o las 13:30 hora solar) y puede tener huecos. El satélite europeo cubre Europa, África y el Atlántico desde septiembre de 2024; fuera de ese disco no hay imagen.</li>
       <li>La meteorología del panel corresponde al punto del motivo; la de las capas, a la rejilla del zoom actual (muy aproximada en montaña, con microclima).</li>
       <li>La luz estimada es una guía orientativa, no una garantía. Mira siempre el cielo y los avisos oficiales (AEMET) antes de salir.</li>
       <li>Necesita conexión a internet, y cada servicio tiene sus propias condiciones de uso y puede fallar o limitar peticiones.</li>
@@ -512,7 +520,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li><b>Read the panel.</b> <i>Estimated light</i> summarises the quality of the light on the subject and how you will see it from your position (front, back or side light). <i>Weather</i> gives clouds by altitude, wind, precipitation and visibility. <i>Sun</i> gives azimuth, altitude and key times. <i>View from the position</i> tells you whether terrain blocks the subject.</li>
       <li><b>2D / 3D view.</b> The switch is at the top left of the map. In 3D, the “Tilt” control sets the angle; you can also tilt with the right mouse button dragging up or down (or Ctrl + drag). “View from the position” puts the camera at your position looking at the subject; Esc or “Back to map” returns.</li>
       <li><b>Rotate the map</b> (in 2D and 3D). Use the “Orientation” control, the right mouse button dragging sideways (or Ctrl + drag), or two fingers on a touch screen. “North up” resets it and “Face the subject” turns it towards the position → subject direction.</li>
-      <li><b>Map layers.</b> Base map (terrain, satellite, streets), terrain shadows with their intensity, hillshade using the current Sun, Sun lines, clouds and areas with possible rain. Each layer is switched on and off with its checkbox.</li>
+      <li><b>Map layers.</b> Base map (terrain, satellite, streets), terrain shadows with their intensity, hillshade using the current Sun, Sun lines, clouds, areas with possible rain, real rain radar, real satellite photo and European satellite. Each layer is switched on and off with its checkbox.</li>
     </ol>
 
     <h3>What each element on the map means</h3>
@@ -527,15 +535,16 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>“Sun lines, framing and line of sight”, in “Map layers”, shows or hides the circle and the three lines at once.</li>
     </ul>
 
-    <h3>Cloud and rain layers</h3>
+    <h3>Cloud, rain and satellite layers</h3>
     <ul>
-      <li><b>They start switched off</b> and are not remembered between sessions: you turn them on when you want them. While they are off, the area forecast is not requested.</li>
+      <li><b>There are five layers and all start switched off</b> (they are not remembered between sessions): you turn them on when you want them. Two are <b>forecast</b> (clouds and possible rain) and three are <b>real observation</b> (rain radar, NASA satellite photo and European satellite). While a layer is off, its service is not queried.</li>
       <li><b>Clouds.</b> The amount drawn is proportional to the forecast cloud cover: with 30 % about 30 % of the area is covered, with 90 %, almost all of it. High clouds look thinner and low and mid clouds denser. If no clouds are forecast, the layer is empty. The percentage comes from the forecast, but the <b>shape</b> of the patches is illustrative: it is a fixed pattern anchored to the ground, which does not change when you zoom in or out (it only gains detail as you zoom in).</li>
       <li><b>Possible rain.</b> The patches cover an extent similar to the precipitation probability (below 10 % nothing is drawn) and their colour shows the forecast intensity, from light blue (light) to violet (heavy). For past dates, which have no probability, recorded precipitation is used. The shape of the patches is illustrative as well.</li>
-      <li><b>Real rain radar</b> (today’s date only). It draws the rain currently measured by weather radars in the frame closest to the chosen time (one every 10 minutes, covering the last ~2 hours). It is an observation, not a forecast, and looks the same at any scale. There is no data over the ocean or where there is no radar.</li>
-      <li><b>Real satellite photo</b> (any day from July 2002 to today). It shows NASA’s MODIS true-colour image for the chosen day (Terra before 12:30, Aqua after). It is <b>a single pass per day</b> (around 10:30 or 13:30 solar time), not the exact time you chose, and may have gaps between passes. It is not instantaneous: there is no free global data without a key to see the clouds at other times of day.</li>
-      <li><b>They change with the time</b> of the slider and drift with the wind.</li>
-      <li><b>Forecast grid.</b> The data comes from a grid of points that adapts to the zoom: from about 16 to 144 points, 5, 10, 20, 40, 80 or 160 km apart (finer as you zoom in); the grid includes a one-cell margin around the view, so small pans do not need new data. The grid in use is shown under each checkbox. They can be seen from a valley to the whole Iberian Peninsula; with a view wider than about 1,300 km they are hidden.</li>
+      <li><b>Real rain radar</b> (today’s date only). It draws the rain currently measured by weather radars in the frame closest to the chosen time (one every 10 minutes, covering the last ~2 hours). It is an observation, not a forecast, and looks the same at any scale. There is no data over the ocean or where there is no radar. Its “Intensity” control sets the opacity (it is remembered).</li>
+      <li><b>Real satellite photo</b> (any day from July 2002 to today). It shows NASA’s MODIS true-colour image for the chosen day (Terra before 12:30, Aqua after). It is <b>a single pass per day</b> (around 10:30 or 13:30 solar time), not the exact time you chose, and may have gaps between passes. It is not instantaneous: to see the clouds at other times of the day in Europe use the European satellite.</li>
+      <li><b>European satellite Meteosat</b> (from late September 2024 to today). Image from EUMETSAT’s third-generation Meteosat satellite, <b>every 10 minutes</b>: the one closest to the chosen time, in true colour by day and infrared at night. It covers Europe, Africa and the Atlantic. When switched on, the app asks EUMETSAT which times are available; if the service does not respond or the browser blocks it, the note under the checkbox says so.</li>
+      <li><b>With the time.</b> The forecast layers change with the slider and drift with the wind. The radar and the European satellite show the available frame closest to the chosen time; the NASA photo is the one for the chosen day. The real layers cannot be shown for future days.</li>
+      <li><b>Forecast grid</b> (clouds and possible rain only). The data comes from a grid of points that adapts to the zoom: from about 16 to 144 points, 5, 10, 20, 40, 80 or 160 km apart (finer as you zoom in); the grid includes a one-cell margin around the view, so small pans do not need new data. The grid in use is shown under each checkbox. They can be seen from a valley to the whole Iberian Peninsula; with a view wider than about 1,300 km they are hidden.</li>
     </ul>
 
     <h3>Keyboard and mouse tips</h3>
@@ -558,6 +567,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
         <tr><td><b>Place search</b></td><td><a href="https://nominatim.org/" target="_blank" rel="noopener">Nominatim</a> (OpenStreetMap), worldwide; if it fails, <a href="https://photon.komoot.io/" target="_blank" rel="noopener">Photon</a> (Komoot, also with OpenStreetMap data). Both are free and need no key.</td><td>Go to a city, district, region, mountain range, peak, river… in any country by name.</td></tr>
         <tr><td><b>Rain radar</b></td><td><a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>, global mosaic of weather radars (<code>api.rainviewer.com</code>), frames from the last ~2 h. Only queried if you switch the layer on.</td><td>See the rain that is falling now (“Real rain radar” layer).</td></tr>
         <tr><td><b>Satellite photo</b></td><td><a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a> (<code>gibs.earthdata.nasa.gov</code>), MODIS true-colour imagery from Terra and Aqua, since July 2002. Only queried if you switch the layer on.</td><td>See the real clouds of a given day (“Real satellite photo” layer); one pass per day.</td></tr>
+        <tr><td><b>European satellite</b></td><td><a href="https://www.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a>, EUMETView service (<code>view.eumetsat.int</code>): third-generation Meteosat, true colour and infrared every 10 min, since September 2024. Data CC BY 4.0: “Contains modified EUMETSAT Meteosat data”. Only queried if you switch the layer on.</td><td>See the real clouds at the chosen time over Europe and the Atlantic (“European satellite Meteosat” layer).</td></tr>
       </tbody>
     </table>
 
@@ -577,7 +587,9 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     <ul>
       <li>Open-Meteo counts each grid point as one request, with indicative free-plan limits of 600 per minute, 5,000 per hour and 10,000 per day. To avoid exhausting them, the application keeps every point already requested in memory (when you move the map it only asks for the new ones), groups requests (up to 100 points per request) and imposes its own cap of about 2,500 points per hour and 400 per minute, which it remembers even if you reload the page.</li>
       <li>If the cap is reached, or the service replies that there are too many requests, the layers pause for a few minutes and say so under the checkbox; they resume on their own.</li>
-      <li>Your browser also stores locally your points, the radius and the layer options (except clouds and rain) and your language choice.</li>
+      <li>The RainViewer radar allows about 100 requests per minute per IP address: the app asks for large tiles (512 px) to stay well below that limit, but with a lot of zooming or fast panning the radar may pause for a few seconds.</li>
+      <li>The NASA satellite photo and the EUMETSAT European satellite are requested only if you tick their checkbox, and each downloads only the visible tiles. If a service does not respond, or the browser does not allow it to answer, the note under the checkbox says so; untick and tick the box again to retry.</li>
+      <li>Your browser also stores locally your points, the radius, the shadow and radar intensity, the options of the shadow, relief and line layers (not the five cloud, rain and satellite layers) and your language choice.</li>
     </ul>
 
     <h3>Limits worth knowing</h3>
@@ -585,6 +597,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>Outside Spain everything works (terrain, maps and forecast are global), but it is less tested: check that local time and sunrise match what you expect. At polar latitudes the Sun may not rise or set and some times do not exist.</li>
       <li>Shadows come from terrain only (30–60 m model): they do not include trees, buildings or small rocks. The shadow map does not apply Earth curvature; the line-of-sight profile does.</li>
       <li>The <b>amount</b> of cloud and the probability of rain come from the forecast, but the <b>shape</b> of the patches is illustrative: the forecast does not say where each cloud is. Clouds are drawn flat on the terrain, not at their real height.</li>
+      <li><b>Radar and satellites.</b> The radar only covers the last ~2 hours (today’s date) and has no data over the ocean or where there is no radar; its colour palette is set by the service. The NASA photo is a single pass per day (around 10:30 or 13:30 solar time) and may have gaps. The European satellite covers Europe, Africa and the Atlantic since September 2024; there is no image outside that disc.</li>
       <li>The weather in the panel corresponds to the subject's point; that of the layers, to the grid for the current zoom (very approximate in mountains, with microclimates).</li>
       <li>The estimated light is an indicative guide, not a guarantee. Always look at the sky and the official warnings (AEMET in Spain) before setting out.</li>
       <li>It needs an internet connection, and each service has its own terms of use and may fail or limit requests.</li>
@@ -1205,14 +1218,14 @@ const sgn = v => (v >= 0 ? '+' : '−') + nf(Math.abs(v), 0);
 
 /* ============ Estado ============ */
 const STORE = 'luz-y-relieve:v1';
-const DEF = { target: { lat: 37.0535, lon: -3.3114 }, observer: { lat: 37.0551, lon: -3.3664 }, radius: 1000, targetH: 0, base: 'topo', shadows: true, shade: 0.55, hill: true, lines: true, cloud: false, rain: false, radar: false, sat: false };
+const DEF = { target: { lat: 37.0535, lon: -3.3114 }, observer: { lat: 37.0551, lon: -3.3664 }, radius: 1000, targetH: 0, base: 'topo', shadows: true, shade: 0.55, hill: true, lines: true, cloud: false, rain: false, radar: false, sat: false, eum: false, radarA: 0.9 };
 function loadSaved() {
   try {
     const s = JSON.parse(localStorage.getItem(STORE) || '{}'), o = {};
     const okp = p => p && isFinite(p.lat) && isFinite(p.lon) && Math.abs(p.lat) < 85;
     if (okp(s.target)) o.target = { lat: +s.target.lat, lon: +s.target.lon };
     if (okp(s.observer)) o.observer = { lat: +s.observer.lat, lon: +s.observer.lon };
-    ['radius', 'targetH', 'shade'].forEach(k => { if (isFinite(s[k])) o[k] = +s[k]; });
+    ['radius', 'targetH', 'shade', 'radarA'].forEach(k => { if (isFinite(s[k])) o[k] = +s[k]; });
     if (['topo', 'sat', 'osm'].includes(s.base)) o.base = s.base;
     if (['es', 'en'].includes(s.lang)) o.lang = s.lang;
     ['shadows', 'hill', 'lines'].forEach(k => { if (typeof s[k] === 'boolean') o[k] = s[k]; });
@@ -1221,7 +1234,7 @@ function loadSaved() {
 }
 const S = Object.assign({}, DEF, loadSaved(), { active: 'target', date: null, min: 0, mode3d: false, eye: false, savedCam: null, pitch: 60 });
 function save() {
-  try { localStorage.setItem(STORE, JSON.stringify({ target: S.target, observer: S.observer, radius: S.radius, targetH: S.targetH, base: S.base, shadows: S.shadows, shade: S.shade, hill: S.hill, lines: S.lines, lang: LANG })); } catch (e) {}
+  try { localStorage.setItem(STORE, JSON.stringify({ target: S.target, observer: S.observer, radius: S.radius, targetH: S.targetH, base: S.base, shadows: S.shadows, shade: S.shade, radarA: S.radarA, hill: S.hill, lines: S.lines, lang: LANG })); } catch (e) {}
 }
 
 /* ============ Idioma / Language ============ */
@@ -1267,6 +1280,7 @@ const EN_STATIC = {
   'Radar real (débil → fuerte)': 'Real radar (light → heavy)',
   'Radar de lluvia real (últimas 2 h)': 'Real rain radar (last 2 h)',
   'Foto de satélite real (NASA, día elegido)': 'Real satellite photo (NASA, chosen day)',
+  'Satélite europeo Meteosat (cada 10 min)': 'European satellite Meteosat (every 10 min)',
   'Idioma / Language': 'Language / Idioma'
 };
 const STATIC = [];
@@ -1494,7 +1508,7 @@ function initMap() {
     });
     map.on('zoomend', updateGeo);
     map.on('moveend', () => { if (!S.eye) { scheduleOverlay(); scheduleWL(); } });
-    map.on('error', e => { const id = e && e.sourceId; if (id === 'real-sat' || id === 'real-radar') { real[id.slice(5)].err = true; realNotes(); } });
+    map.on('error', e => { const id = e && e.sourceId; if (id === 'real-sat' || id === 'real-radar' || id === 'real-eum') { real[id.slice(5)].err = true; realNotes(); } });
     map.on('rotate', syncRot);
     map.on('pitch', () => { const sc = document.querySelector('.maplibregl-ctrl-scale'); if (sc) sc.style.display = map.getPitch() > 80 ? 'none' : ''; if (S.mode3d) { const v = Math.round(map.getPitch()); $('#pitch').value = v; $('#pitchout').textContent = v + '°'; } });
     mapReady = true;
@@ -1904,15 +1918,16 @@ function wlNotes() {
    Satélite: NASA GIBS, imagen MODIS en color real del día elegido (Terra por la mañana, Aqua por la tarde; una pasada al día).
    Son imágenes servidas como teselas y se ven igual a cualquier escala. Se piden solo si se marca la casilla. */
 const RV_JSON = 'https://api.rainviewer.com/public/weather-maps.json';
-const real = { rv: null, rvAt: 0, timer: 0, radar: { st: 'idle', key: '', msg: '', ts: 0, fut: false, err: false }, sat: { st: 'idle', key: '', msg: '', sensor: '', today: false, err: false } };
+const real = { rv: null, rvAt: 0, timer: 0, radar: { st: 'idle', key: '', msg: '', ts: 0, fut: false, err: false }, sat: { st: 'idle', key: '', msg: '', sensor: '', today: false, err: false },
+  eum: { st: 'idle', key: '', msg: '', err: false, ts: 0, latest: false, night: false, caps: null, capsAt: 0 } };
 function scheduleReal(d) { clearTimeout(real.timer); real.timer = setTimeout(realRefresh, d == null ? 300 : d); }
-function realLayer(k, key, url, opts, opacity, before) {
+function realLayer(k, key, url, opts, opacity, before, extra) {
   const sid = 'real-' + k, lid = sid + '-layer';
   if (!map.getSource(sid) || real[k].key !== key) {
     if (map.getLayer(lid)) map.removeLayer(lid);
     if (map.getSource(sid)) map.removeSource(sid);
     map.addSource(sid, Object.assign({ type: 'raster', tiles: [url], tileSize: 256 }, opts));
-    map.addLayer({ id: lid, type: 'raster', source: sid, paint: { 'raster-opacity': opacity, 'raster-fade-duration': 0 } }, before);
+    map.addLayer({ id: lid, type: 'raster', source: sid, paint: Object.assign({ 'raster-opacity': opacity, 'raster-fade-duration': 0, 'raster-resampling': 'linear' }, extra || {}) }, before);
     real[k].key = key; real[k].err = false;
   }
   map.setLayoutProperty(lid, 'visibility', 'visible');
@@ -1936,7 +1951,7 @@ async function realRadar() {
     const tgt = C.zonedToUtc(p.y, p.mo, p.d, Math.floor(S.min / 60), Math.floor(S.min % 60), tz()) / 1000;
     let best = fr[fr.length - 1]; for (const f of fr) if (Math.abs(f.time - tgt) < Math.abs(best.time - tgt)) best = f;
     R.ts = best.time * 1000; R.fut = tgt > fr[fr.length - 1].time + 900;
-    realLayer('radar', best.path, `${real.rv.host}${best.path}/256/{z}/{x}/{y}/2/1_1.png`, { maxzoom: 7, attribution: 'Radar © <a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>' }, 0.8, 'zone-fill');
+    realLayer('radar', best.path, `${real.rv.host}${best.path}/512/{z}/{x}/{y}/2/1_1.png`, { tileSize: 512, maxzoom: 7, attribution: 'Radar © <a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>' }, S.radarA, 'zone-fill', { 'raster-saturation': 0.5, 'raster-contrast': 0.3, 'raster-brightness-max': 0.88 });
     $('#lg-radar').hidden = false; R.st = 'ready';
   } catch (e) { R.st = 'error'; R.msg = String(e && e.message || e); realHide('radar'); }
 }
@@ -1951,9 +1966,70 @@ function realSat() {
   realLayer('sat', T.sensor + S.date, url, { maxzoom: 9, attribution: 'Imagery: NASA <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">GIBS</a> / MODIS ' + T.sensor }, 0.85, 'hillshade');
   T.st = 'ready';
 }
+/* Satélite europeo: EUMETSAT, servicio EUMETView (WMS). Imágenes de Meteosat Tercera Generación (MTG-I1, cada 10 min):
+   color real de día e infrarrojo de noche. Sin clave; datos CC BY 4.0, "Contains modified EUMETSAT Meteosat data".
+   Al activarla se lee el listado de capas (GetCapabilities) para conocer las horas disponibles y se pide la imagen
+   más cercana a la hora elegida. Si el servidor no responde o el navegador lo bloquea, la nota lo dice. */
+const EUM_WMS = 'https://view.eumetsat.int/geoserver/wms', EUM_DAY = 'mtg_fd:rgb_truecolour', EUM_NIGHT = 'mtg_fd:ir105_hrfi', EUM_FROM = Date.UTC(2024, 8, 24);
+function eumPeriod(p) { const m = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/.exec(p || ''); return m ? (((+m[1] || 0) * 24 + (+m[2] || 0)) * 60 + (+m[3] || 0)) * 60000 + (+m[4] || 0) * 1000 : 0; }
+function eumExtent(txt) { // «inicio/fin/PT10M» (puede haber varios tramos) o lista de instantes separados por comas
+  if (!txt) return null;
+  const parts = txt.split(',').map(x => x.trim()).filter(Boolean);
+  if (parts.some(x => x.includes('/'))) {
+    const last = parts[parts.length - 1].split('/'), first = parts[0].split('/'), st = Date.parse(first[0]), en = Date.parse(last[1] || last[0]), step = eumPeriod(last[2]) || 600000;
+    return isFinite(st) && isFinite(en) ? { start: st, end: en, step } : null;
+  }
+  const l = parts.map(x => Date.parse(x)).filter(isFinite).sort((a, b) => a - b);
+  return l.length ? { start: l[0], end: l[l.length - 1], step: 0, list: l } : null;
+}
+async function eumCaps() {
+  const E = real.eum;
+  if (E.caps && Date.now() - E.capsAt < 900000) return E.caps;
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 25000);
+  const res = await fetch(EUM_WMS + '?service=WMS&version=1.3.0&request=GetCapabilities', { signal: ctl.signal }); clearTimeout(to);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const xml = new DOMParser().parseFromString(await res.text(), 'application/xml');
+  if (xml.getElementsByTagName('parsererror').length) throw new Error(tr('respuesta ilegible', 'unreadable response'));
+  const dim = name => {
+    for (const L of xml.getElementsByTagName('Layer')) {
+      const n = [...L.children].find(c => c.localName === 'Name');
+      if (n && n.textContent.trim() === name) { const d = [...L.children].find(c => c.localName === 'Dimension' && /^time$/i.test(c.getAttribute('name') || '')); return d ? eumExtent(d.textContent.trim()) : null; }
+    }
+    return undefined; // la capa no existe
+  };
+  const caps = { day: dim(EUM_DAY), night: dim(EUM_NIGHT) };
+  if (caps.day === undefined && caps.night === undefined) throw new Error(tr('el servicio ya no ofrece las capas esperadas', 'the service no longer offers the expected layers'));
+  E.caps = caps; E.capsAt = Date.now(); return caps;
+}
+async function realEum() {
+  const E = real.eum;
+  if (!S.eum) { realHide('eum'); E.st = 'idle'; return; }
+  const diff = C.daysBetween(C.todayIn(tz()), S.date);
+  if (diff > 0) { E.st = 'future'; realHide('eum'); return; }
+  const p = C.parseDate(S.date), tgt = C.zonedToUtc(p.y, p.mo, p.d, Math.floor(S.min / 60), Math.floor(S.min % 60), tz());
+  if (tgt < EUM_FROM) { E.st = 'old'; realHide('eum'); return; }
+  try {
+    if (!E.caps || Date.now() - E.capsAt >= 900000) { E.st = 'loading'; realNotes(); }
+    const caps = await eumCaps(); if (!S.eum) return;
+    const night = cur().sun.alt < 3, ext = night ? caps.night : caps.day, layer = night ? EUM_NIGHT : EUM_DAY;
+    if (ext === undefined) throw new Error(tr('capa no disponible: ', 'layer unavailable: ') + layer);
+    let t = null; E.latest = false;
+    if (ext) {
+      if (tgt < ext.start) { E.st = 'old'; realHide('eum'); return; }
+      if (tgt >= ext.end) { t = ext.end; E.latest = tgt > ext.end + 1800000; }
+      else if (ext.list) { t = ext.list.reduce((b, x) => Math.abs(x - tgt) < Math.abs(b - tgt) ? x : b, ext.list[0]); }
+      else t = Math.min(ext.end, ext.start + Math.round((tgt - ext.start) / ext.step) * ext.step);
+    }
+    E.ts = t; E.night = night;
+    const tm = t ? '&time=' + encodeURIComponent(new Date(t).toISOString()) : '';
+    const url = `${EUM_WMS}?service=WMS&version=1.3.0&request=GetMap&layers=${encodeURIComponent(layer)}&styles=&format=image%2Fpng&transparent=true&crs=EPSG:3857&width=256&height=256${tm}&bbox={bbox-epsg-3857}`;
+    realLayer('eum', layer + (t || 'latest'), url, { maxzoom: 9, attribution: 'Contains modified <a href="https://www.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a> Meteosat data ' + new Date(t || Date.now()).getUTCFullYear() }, 0.9, 'hillshade');
+    E.st = 'ready';
+  } catch (e) { E.st = 'error'; E.msg = String(e && e.message || e); realHide('eum'); }
+}
 async function realRefresh() {
   if (!mapReady) return;
-  realSat(); await realRadar(); realNotes();
+  realSat(); await realRadar(); await realEum(); realNotes();
 }
 function realNotes() {
   const put = (el, on, html) => { el.hidden = !(on && html); el.innerHTML = html || ''; };
@@ -1964,6 +2040,7 @@ function realNotes() {
   else if (R.st === 'error') h = tr(`<span class="bad">No se pudo cargar el radar</span> (${esc(R.msg)}). Desmarca y vuelve a marcar la casilla para reintentar.`, `<span class="bad">Could not load the radar</span> (${esc(R.msg)}). Untick and tick the box again to retry.`);
   else if (R.st === 'ready') h = tr(`Fotograma de las <b>${C.fmtTime(R.ts, tz())}</b> (${esc(tzAbbr(R.ts, tz()))}), el más cercano a la hora elegida${R.fut ? '; la hora elegida es posterior: es el último disponible' : ''}. Mide lluvia que cae, no previsión. Sin cobertura en océanos ni zonas sin radar.`, `Frame from <b>${C.fmtTime(R.ts, tz())}</b> (${esc(tzAbbr(R.ts, tz()))}), the closest to the chosen time${R.fut ? '; the chosen time is later: this is the latest available' : ''}. It shows rain that is falling, not a forecast. No coverage over oceans or areas without radar.`);
   if (h && R.st === 'ready' && R.err) h += ' <span class="bad">' + tr('Algunas teselas no se pudieron cargar.', 'Some tiles could not be loaded.') + '</span>';
+  $('#radar-a-row').hidden = !S.radar;
   put($('#radar-note'), S.radar, h);
   h = '';
   if (T.st === 'future') h = tr('No hay fotos de satélite de días futuros: usa «Nubes» (previsión).', 'There are no satellite photos for future days: use “Clouds” (forecast).');
@@ -1971,6 +2048,15 @@ function realNotes() {
   else if (T.st === 'ready') h = tr(`Imagen en color real de <b>${T.sensor}</b>: una sola pasada al día (≈ ${T.sensor === 'Aqua' ? '13:30' : '10:30'} hora solar local), no la hora elegida${T.today ? '; la de hoy puede estar incompleta' : ''}. Pueden verse huecos entre pasadas. Las nubes son blancas; el terreno, de color real.`, `True-colour image from <b>${T.sensor}</b>: a single pass per day (≈ ${T.sensor === 'Aqua' ? '1:30 pm' : '10:30 am'} local solar time), not the chosen time${T.today ? '; today’s may be incomplete' : ''}. Gaps between passes may show. Clouds are white; land is shown in true colour.`);
   if (h && T.st === 'ready' && T.err) h += ' <span class="bad">' + tr('Algunas teselas no se pudieron cargar.', 'Some tiles could not be loaded.') + '</span>';
   put($('#sat-note'), S.sat, h);
+  h = '';
+  const M = real.eum;
+  if (M.st === 'loading') h = '<span class="spin"></span>' + tr('Consultando EUMETSAT…', 'Querying EUMETSAT…');
+  else if (M.st === 'future') h = tr('No hay imágenes de satélite de días futuros: usa «Nubes» (previsión).', 'There are no satellite images for future days: use “Clouds” (forecast).');
+  else if (M.st === 'old') h = tr('EUMETSAT ofrece imágenes del nuevo Meteosat (MTG) desde finales de septiembre de 2024. Para fechas anteriores usa la foto de satélite de la NASA.', 'EUMETSAT offers images from the new Meteosat (MTG) since late September 2024. For earlier dates use the NASA satellite photo.');
+  else if (M.st === 'error') h = tr(`<span class="bad">No se pudo cargar el satélite europeo</span> (${esc(M.msg)}). Desmarca y vuelve a marcar la casilla para reintentar.`, `<span class="bad">Could not load the European satellite</span> (${esc(M.msg)}). Untick and tick the box again to retry.`);
+  else if (M.st === 'ready') h = tr(`Imagen Meteosat de las <b>${M.ts ? C.fmtTime(M.ts, tz()) : '—'}</b> (${M.ts ? esc(tzAbbr(M.ts, tz())) : ''}), la más cercana a la hora elegida${M.latest ? '; la hora elegida es posterior: es la última disponible' : ''}. ${M.night ? 'De noche: infrarrojo (más claro = nube más alta y fría).' : 'De día: color real.'} Cubre Europa, África y el Atlántico; fuera de ese disco no hay imagen.`, `Meteosat image from <b>${M.ts ? C.fmtTime(M.ts, tz()) : '—'}</b> (${M.ts ? esc(tzAbbr(M.ts, tz())) : ''}), the closest to the chosen time${M.latest ? '; the chosen time is later: this is the latest available' : ''}. ${M.night ? 'At night: infrared (brighter = higher, colder cloud).' : 'By day: true colour.'} It covers Europe, Africa and the Atlantic; there is no image outside that disc.`);
+  if (h && M.st === 'ready' && M.err) h += ' <span class="bad">' + tr('Algunas teselas no se pudieron cargar.', 'Some tiles could not be loaded.') + '</span>';
+  put($('#eum-note'), S.eum, h);
 }
 
 /* ============ Análisis alrededor del motivo ============ */
@@ -2474,7 +2560,11 @@ function bindUI() {
   $('#o-lines').checked = S.lines; $('#o-lines').onchange = e => { S.lines = e.target.checked; save(); updateGeo(); };
   $('#o-cloud').checked = S.cloud; $('#o-cloud').onchange = e => { S.cloud = e.target.checked; save(); if (S.cloud && wl.status === 'error') wl.status = 'idle'; scheduleWL(0, true); };
   $('#o-rain').checked = S.rain; $('#o-rain').onchange = e => { S.rain = e.target.checked; save(); if (S.rain && wl.status === 'error') wl.status = 'idle'; scheduleWL(0, true); };
-  $('#o-radar').checked = S.radar; $('#o-radar').onchange = e => { S.radar = e.target.checked; real.radar.st = 'idle'; scheduleReal(0); };
+  $('#o-radar').checked = S.radar; $('#o-radar').onchange = e => { S.radar = e.target.checked; real.radar.st = 'idle'; $('#radar-a-row').hidden = !S.radar; scheduleReal(0); };
+  $('#o-radar-a').value = Math.round(S.radarA * 100);
+  $('#o-radar-a').oninput = e => { S.radarA = +e.target.value / 100; if (mapReady && map.getLayer('real-radar-layer')) map.setPaintProperty('real-radar-layer', 'raster-opacity', S.radarA); };
+  $('#o-radar-a').onchange = save;
+  $('#o-eum').checked = S.eum; $('#o-eum').onchange = e => { S.eum = e.target.checked; real.eum.st = 'idle'; real.eum.caps = null; scheduleReal(0); };
   $('#o-sat').checked = S.sat; $('#o-sat').onchange = e => { S.sat = e.target.checked; real.sat.st = 'idle'; scheduleReal(0); };
   $('#rot').oninput = e => { if (mapReady) map.setBearing(+e.target.value); };
   $('#north').onclick = () => { if (mapReady) map.easeTo({ bearing: 0, duration: 500 }); };
