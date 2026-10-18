@@ -1508,7 +1508,15 @@ function initMap() {
        búsqueda…) esos eventos dejan de llegar y el marcador se queda parado. Mientras se arrastra, los paneles no capturan el puntero. */
     const dragOn = () => document.documentElement.classList.add('drag-mk'), dragOff = () => document.documentElement.classList.remove('drag-mk');
     mkT.on('dragstart', dragOn); mkO.on('dragstart', dragOn);
-    ['mouseup', 'touchend', 'touchcancel', 'pointerup', 'blur'].forEach(ev => window.addEventListener(ev, () => setTimeout(dragOff, 0), true));
+    /* MapLibre solo termina el arrastre si el botón se suelta sobre el mapa. Si se suelta sobre un panel, fuera de la ventana o se pierde
+       el foco, el marcador se queda con «pointer-events:none» y el arrastre sin cerrar: ese icono ya no se puede agarrar (y el otro a veces
+       tampoco). Al soltar en cualquier sitio se cierra a la fuerza el arrastre de ambos marcadores. */
+    const endDrags = () => setTimeout(() => {
+      dragOff();
+      [mkT, mkO].forEach(m => { try { if (m._state && m._state !== 'inactive' && m._onUp) m._onUp(); if (m._element) m._element.style.pointerEvents = 'auto'; } catch (e) {} });
+    }, 0);
+    ['mouseup', 'touchend', 'touchcancel', 'pointerup', 'pointercancel', 'blur', 'dragend'].forEach(ev => window.addEventListener(ev, endDrags, true));
+    document.addEventListener('visibilitychange', endDrags);
     mkT.on('drag', () => { const p = mkT.getLngLat(); S.target = { lat: p.lat, lon: p.lng }; live(); });
     mkT.on('dragend', () => { dragOff(); const p = mkT.getLngLat(); S.target = { lat: p.lat, lon: p.lng }; onTargetChange(); });
     mkO.on('drag', () => { const p = mkO.getLngLat(); S.observer = { lat: p.lat, lon: p.lng }; live(); });
@@ -2636,8 +2644,13 @@ useMyLocation = guard('useMyLocation', useMyLocation);
 onTimeChange = guard('onTimeChange', onTimeChange);
 onTargetChange = guard('onTargetChange', onTargetChange);
 function patchMapEvents() {
-  const P = maplibregl.Map.prototype;
-  ['on', 'once'].forEach(k => { const o = P[k]; P[k] = function (t, a, b) { if (typeof a === 'function') a = guard('mapa.' + t, a); else if (typeof b === 'function') b = guard('mapa.' + t, b); return o.call(this, t, a, b); }; });
+  /* Cada función se envuelve UNA sola vez (WeakMap) y «off» desenvuelve: si no, MapLibre no puede quitar sus propios escuchas
+     (p. ej. el arrastre de los marcadores) y los de un marcador ya soltado siguen lanzando errores en cada movimiento del ratón,
+     lo que impide arrastrar el otro marcador. */
+  const P = maplibregl.Map.prototype, W = new WeakMap();
+  const wrap = (n, f) => { if (!W.has(f)) W.set(f, guard('mapa.' + n, f)); return W.get(f); };
+  ['on', 'once'].forEach(k => { const o = P[k]; P[k] = function (t, a, b) { if (typeof a === 'function') a = wrap(t, a); else if (typeof b === 'function') b = wrap(t, b); return o.call(this, t, a, b); }; });
+  const off = P.off; P.off = function (t, a, b) { if (typeof a === 'function' && W.has(a)) a = W.get(a); else if (typeof b === 'function' && W.has(b)) b = W.get(b); return off.call(this, t, a, b); };
 }
 function start() {
   S.date = C.todayIn(tz());
