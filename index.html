@@ -865,6 +865,11 @@ return maplibregl$1;
     return tileRangeForBounds(boxAround(lat, lon, halfM), z);
   }
 
+  /* Altura en 16 bits sin signo: (h + 500 m) × 4, es decir, resolución de 0,25 m y rango de −500 a 15 883 m
+     (con ×8 se desbordaba por encima de 7 691 m y el Himalaya salía con alturas falsas, incluso negativas). */
+  const ELEV_SCALE = 4, ELEV_OFF = 500;
+  const packElev = h => Math.round((Math.max(0, h) + ELEV_OFF) * ELEV_SCALE);
+  const unpackElev = v => v / ELEV_SCALE - ELEV_OFF;
   function makeGrid(z, x0, y0, nx, ny, data) {
     const W = nx * 256, H = ny * 256;
     const mpp = new Float32Array(H);
@@ -1179,7 +1184,7 @@ return maplibregl$1;
     sunPosition, sunTimes,
     localParts, tzOffsetMs, zonedToUtc, fmtTime, tzAbbr, tzFor, todayIn, addDays, daysBetween, parseDate, dateStr, pad2,
     tileRangeForBounds, rangeContains, boxAround, unionBox, planDisplayRegion, analysisRange,
-    makeGrid, gridBounds, gridElev, gridContains, samplepx,
+    packElev, unpackElev, makeGrid, gridBounds, gridElev, gridContains, samplepx,
     sunVisible, sunflower, zoneLit, destPointFast,
     shadowDepth, renderShadow,
     slopeAspect, sunVec, dot, losProfile,
@@ -1359,7 +1364,7 @@ function loadTile(z, x, y) {
         const cx = cv.getContext('2d', { willReadFrequently: true });
         cx.drawImage(img, 0, 0);
         const d = cx.getImageData(0, 0, 256, 256).data, out = new Uint16Array(65536);
-        for (let i = 0, j = 0; i < 65536; i++, j += 4) out[i] = Math.round((Math.max(0, (d[j] * 256 + d[j + 1] + d[j + 2] / 256) - 32768) + 500) * 8); /* batimetría → 0 m: el mar es una superficie plana */
+        for (let i = 0, j = 0; i < 65536; i++, j += 4) out[i] = C.packElev((d[j] * 256 + d[j + 1] + d[j + 2] / 256) - 32768); /* batimetría → 0 m: el mar es una superficie plana */
         resolve(out);
       } catch (e) { tileCache.delete(key); resolve(null); }
     };
@@ -1380,7 +1385,7 @@ async function buildGrid(range, onProgress) {
   tiles.forEach((t, i) => {
     if (!t) { missing++; return; }
     const tx = i % range.nx, ty = (i / range.nx) | 0;
-    for (let r = 0; r < 256; r++) { const row = (ty * 256 + r) * W + tx * 256, src = r * 256; for (let c = 0; c < 256; c++) data[row + c] = t[src + c] / 8 - 500; }
+    for (let r = 0; r < 256; r++) { const row = (ty * 256 + r) * W + tx * 256, src = r * 256; for (let c = 0; c < 256; c++) data[row + c] = C.unpackElev(t[src + c]); }
   });
   return { grid: C.makeGrid(range.z, range.x0, range.y0, range.nx, range.ny, data), missing, total };
 }
