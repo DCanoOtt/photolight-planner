@@ -198,8 +198,9 @@ dialog.help::backdrop{background:rgb(4 8 14 / .6)}
 .results .n{font-weight:600}
 .results .s{display:block;color:var(--ink-2);font-size:11.5px;margin-top:1px}
 .status{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:6;font-size:12.5px;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px rgb(0 0 0 / .25);max-width:80%}
+.drag-mk .viewctl,.drag-mk .maplegend,.drag-mk .mapbtns,.drag-mk .mapsearch,.drag-mk .diagbtn,.drag-mk .maptoast,.drag-mk .status,.drag-mk .panel{pointer-events:none}
 .night{position:absolute;inset:0;z-index:2;background:rgb(6 10 40 / .4);pointer-events:none}
-.mk{cursor:grab;filter:drop-shadow(0 1px 2px rgb(0 0 0 / .5))}
+.mk{cursor:grab;z-index:6;filter:drop-shadow(0 1px 2px rgb(0 0 0 / .5))} /* por encima de los paneles del mapa (z 5): un marcador nunca queda tapado e inagarrable */
 .mk:active{cursor:grabbing}
 .mk svg{display:block}
 .mk .tag{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:1px;font:600 10px var(--sans);padding:1px 6px;border-radius:3px;background:rgb(10 16 24 / .8);color:#fff;white-space:nowrap;pointer-events:none}
@@ -1503,10 +1504,15 @@ function initMap() {
     mkO = new maplibregl.Marker({ element: mkEl('o', tr('Posición', 'Position'), SVG_O), draggable: true, anchor: 'bottom' }).setLngLat([S.observer.lon, S.observer.lat]).addTo(map);
     let raf = 0;
     const live = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; updateGeo(); }); };
+    /* MapLibre sigue el arrastre con los eventos del propio mapa: si el puntero pasa sobre un panel (controles, leyenda,
+       búsqueda…) esos eventos dejan de llegar y el marcador se queda parado. Mientras se arrastra, los paneles no capturan el puntero. */
+    const dragOn = () => document.documentElement.classList.add('drag-mk'), dragOff = () => document.documentElement.classList.remove('drag-mk');
+    mkT.on('dragstart', dragOn); mkO.on('dragstart', dragOn);
+    ['mouseup', 'touchend', 'touchcancel', 'pointerup', 'blur'].forEach(ev => window.addEventListener(ev, () => setTimeout(dragOff, 0), true));
     mkT.on('drag', () => { const p = mkT.getLngLat(); S.target = { lat: p.lat, lon: p.lng }; live(); });
-    mkT.on('dragend', () => { const p = mkT.getLngLat(); S.target = { lat: p.lat, lon: p.lng }; onTargetChange(); });
+    mkT.on('dragend', () => { dragOff(); const p = mkT.getLngLat(); S.target = { lat: p.lat, lon: p.lng }; onTargetChange(); });
     mkO.on('drag', () => { const p = mkO.getLngLat(); S.observer = { lat: p.lat, lon: p.lng }; live(); });
-    mkO.on('dragend', () => { const p = mkO.getLngLat(); S.observer = { lat: p.lat, lon: p.lng }; onObserverChange(); });
+    mkO.on('dragend', () => { dragOff(); const p = mkO.getLngLat(); S.observer = { lat: p.lat, lon: p.lng }; onObserverChange(); });
     map.on('click', e => {
       if (e.originalEvent && e.originalEvent.target && e.originalEvent.target.closest && e.originalEvent.target.closest('.mk')) return;
       placeActive(e.lngLat.lat, e.lngLat.lng);
@@ -1530,7 +1536,11 @@ function fitBoth(anim) {
   const t = S.target, o = S.observer;
   const b = new maplibregl.LngLatBounds([Math.min(t.lon, o.lon), Math.min(t.lat, o.lat)], [Math.max(t.lon, o.lon), Math.max(t.lat, o.lat)]);
   const same = C.distanceTo(t.lat, t.lon, o.lat, o.lon) < 50;
-  const opt = { padding: { top: 70, bottom: 70, left: 60, right: 60 }, maxZoom: 14.5, duration: anim ? 700 : 0 };
+  /* El margen izquierdo respeta la columna de controles (orientación, inclinación…): si no, el marcador de la posición
+     puede quedar bajo ella y no se puede agarrar para arrastrarlo. */
+  let left = 60;
+  try { const st = document.querySelector('.stage').getBoundingClientRect(), vc = document.querySelector('.viewctl').getBoundingClientRect(); if (st.width > 700) left = clamp(vc.right - st.left + 30, 60, st.width * 0.4); } catch (e) {}
+  const opt = { padding: { top: 70, bottom: 70, left, right: 60 }, maxZoom: 14.5, duration: anim ? 700 : 0 };
   if (same) map.easeTo({ center: [t.lon, t.lat], zoom: 14, duration: opt.duration }); else map.fitBounds(b, opt);
 }
 function diagReport() {
