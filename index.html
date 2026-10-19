@@ -47,7 +47,7 @@ button,input,select{font:inherit;color:inherit}
 .hint{margin:8px 0 0;color:var(--ink-2);font-size:12.5px}
 .row{display:flex;flex-wrap:wrap;gap:10px 14px;margin-top:12px}
 .row label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
-select,input[type=number],input[type=date],input[type=search]{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:5px 8px;min-height:32px}
+select,input[type=text],input[type=number],input[type=date],input[type=search]{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:5px 8px;min-height:32px}
 input[type=number]{width:76px}
 input[type=range]{width:100%;accent-color:var(--accent-strong)}
 .btn{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:5px 10px;min-height:32px;cursor:pointer;font-weight:500}
@@ -199,6 +199,35 @@ dialog.help::backdrop{background:rgb(4 8 14 / .6)}
 .results .s{display:block;color:var(--ink-2);font-size:11.5px;margin-top:1px}
 .status{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:6;font-size:12.5px;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px rgb(0 0 0 / .25);max-width:80%}
 .drag-mk .viewctl,.drag-mk .maplegend,.drag-mk .mapbtns,.drag-mk .mapsearch,.drag-mk .diagbtn,.drag-mk .maptoast,.drag-mk .status,.drag-mk .panel{pointer-events:none}
+.fold{padding:0}
+.fold>summary{padding:14px 16px;cursor:pointer;list-style:none;font:600 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2)}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:'▸';display:inline-block;width:14px}
+.fold[open]>summary::before{content:'▾'}
+.fold>.fb{padding:0 16px 14px}
+.fxrow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 10px;margin:0 0 6px;cursor:pointer;font:inherit;color:inherit}
+.fxrow:hover{border-color:var(--accent-strong)}
+.fxrow b{font-weight:600;font-size:13px}
+.fxrow .mono{font-size:12.5px;text-align:right}
+.fxrow em{grid-column:1/-1;font-style:normal;color:var(--ink-2);font-size:12.5px}
+.fxrow small{font-weight:400;color:var(--ink-2)}
+.bestrow{grid-template-columns:92px 1fr}
+.bestbars{display:grid;grid-template-columns:minmax(28px,1fr) 22px 38px minmax(28px,1fr) 22px 38px;gap:5px;align-items:center;font-size:12px}
+.bestbars small{font-size:11px}
+.besthd{display:grid;grid-template-columns:92px 1fr;padding:0 10px 3px;font-size:11px;color:var(--ink-2)}
+.bst{height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:block}
+.bst i{display:block;height:100%}
+.bst i.g{background:var(--good)} .bst i.w{background:var(--warn)} .bst i.b{background:var(--bad)}
+.mtab{display:grid;grid-template-columns:1fr repeat(4,auto);gap:4px 12px;font-size:12.5px;margin-top:10px;align-items:baseline}
+.mtab b{font-size:11px;color:var(--ink-2);font-weight:600;text-align:right}
+.mtab .mono{text-align:right}
+.pl-row{display:flex;gap:8px;align-items:center;margin:0 0 8px}
+.pl-row input[type=text]{flex:1;min-width:0}
+.pls{list-style:none;margin:8px 0;padding:0}
+.pls li{display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pls li span{flex:1;min-width:0;overflow-wrap:anywhere}
+.pls li small{color:var(--ink-2)}
+.pls li.none{color:var(--ink-2);font-size:12.5px}
 .night{position:absolute;inset:0;z-index:2;background:rgb(6 10 40 / .4);pointer-events:none}
 .mk{cursor:grab;z-index:6;filter:drop-shadow(0 1px 2px rgb(0 0 0 / .5))} /* por encima de los paneles del mapa (z 5): un marcador nunca queda tapado e inagarrable */
 .mk:active{cursor:grabbing}
@@ -286,6 +315,17 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <p class="hint" id="search-note" hidden></p>
     </section>
 
+    <details class="sec fold" id="s-places"><summary>Localizaciones y enlace</summary><div class="fb">
+      <div class="pl-row"><input type="text" id="pl-name" maxlength="80" placeholder="Nombre (p. ej. Mulhacén, amanecer)" aria-label="Nombre de la localización" autocomplete="off"><button class="btn" id="pl-save" type="button">Guardar</button></div>
+      <div class="opt"><input type="checkbox" id="pl-date"><label for="pl-date" class="grow">Incluir fecha y hora</label></div>
+      <ul class="pls" id="pl-list"></ul>
+      <p class="pl-row" style="margin:6px 0"><button class="btn" id="pl-export" type="button">Exportar</button><button class="btn" id="pl-import" type="button">Importar</button><input type="file" id="pl-file" accept=".json,application/json" hidden></p>
+      <div class="pl-row" style="margin-top:12px"><input type="text" id="lk-out" readonly aria-label="Enlace de esta planificación"><button class="btn" id="lk-copy" type="button">Copiar enlace</button></div>
+      <p class="note" id="lk-note" hidden>Estás usando el archivo en local: el enlace solo funcionará en este equipo. Publica la página (p. ej. en GitHub Pages) para compartir enlaces.</p>
+      <div class="pl-row"><input type="text" id="lk-in" placeholder="Pega un enlace o código" aria-label="Enlace o código para abrir" autocomplete="off"><button class="btn" id="lk-open" type="button">Abrir</button></div>
+      <p class="note" id="pl-note" hidden></p>
+    </div></details>
+
     <section class="sec" id="s-when">
       <h2>Fecha y hora</h2>
       <div class="when-row">
@@ -307,9 +347,18 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     </section>
 
     <section class="sec" id="s-light"><h2>Luz estimada</h2><div id="light"></div></section>
-    <section class="sec" id="s-weather"><h2>Meteorología en el motivo</h2><div id="wx"></div></section>
+    <section class="sec" id="s-weather"><h2>Meteorología en el motivo</h2><div id="wx"></div>
+      <p style="margin:10px 0 0"><button class="btn" id="models-go" type="button">Comparar modelos de previsión</button></p><div id="models"></div></section>
     <section class="sec" id="s-sun"><h2>Sol</h2><dl class="kv" id="sunkv"></dl></section>
+    <details class="sec fold" id="s-windows" open><summary>Ventanas de luz</summary><div class="fb"><div id="windows"></div></div></details>
+    <details class="sec fold" id="s-best"><summary>Mejor día</summary><div class="fb">
+      <div class="row" style="margin-top:0"><label>Desde <input type="date" id="best-from" aria-label="Primer día"></label><label>Días <select id="best-n" aria-label="Número de días"><option value="7">7</option><option value="10">10</option><option value="16">16</option></select></label></div>
+      <p style="margin:10px 0 0"><button class="btn" id="best-go" type="button">Buscar el mejor día</button></p><div id="best"></div></div></details>
+    <details class="sec fold" id="s-night"><summary>Luna y Vía Láctea</summary><div class="fb"><div id="night"></div></div></details>
+    <details class="sec fold" id="s-align"><summary>Alineaciones Sol y Luna con el motivo</summary><div class="fb"><div id="align"></div>
+      <p style="margin:10px 0 0"><button class="btn" id="align-go" type="button">Buscar alineaciones en el próximo año</button></p><div id="align-res"></div></div></details>
     <section class="sec" id="s-los"><h2>Vista desde la posición</h2><div class="los" id="los"></div></section>
+    <details class="sec fold" id="s-env"><summary>Niebla, nieve y aire</summary><div class="fb"><div id="env"></div></div></details>
 
     <section class="sec" id="s-layers">
       <h2>Capas del mapa</h2>
@@ -330,6 +379,8 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <p class="sub" id="sat-note" hidden></p>
       <div class="opt"><input type="checkbox" id="o-eum"><label for="o-eum" class="grow">Satélite europeo Meteosat (cada 10 min)</label></div>
       <p class="sub" id="eum-note" hidden></p>
+      <div class="opt"><input type="checkbox" id="o-snow"><label for="o-snow" class="grow">Cobertura de nieve (satélite NASA)</label></div>
+      <p class="sub" id="snow-note" hidden></p>
     </section>
 
     <footer class="foot">
@@ -416,7 +467,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li><b>Leer el panel.</b> <i>Luz estimada</i> resume la calidad de la luz sobre el motivo y cómo la verás desde tu posición (a favor, en contra o de lado). <i>Meteorología</i> da nubes por altura, viento, precipitación y visibilidad. <i>Sol</i> da acimut, altura y horas clave. <i>Vista desde la posición</i> dice si el relieve tapa el motivo.</li>
       <li><b>Vista 2D / 3D.</b> El conmutador está arriba a la izquierda del mapa. En 3D, el control «Inclinación» fija el ángulo; también se inclina con el botón derecho del ratón arrastrando arriba o abajo (o Ctrl + arrastrar). «Ver desde la posición» pone la cámara en tu posición mirando al motivo; Esc o «Volver al mapa» regresa.</li>
       <li><b>Rotar el mapa</b> (en 2D y en 3D). Usa el control «Orientación», el botón derecho del ratón arrastrando hacia los lados (o Ctrl + arrastrar), o dos dedos en pantalla táctil. «Norte arriba» lo reorienta y «Mirar al motivo» lo gira hacia la dirección posición → motivo.</li>
-      <li><b>Capas del mapa.</b> Mapa base (relieve, satélite, callejero), sombras de la orografía con su intensidad, relieve sombreado con el Sol actual, líneas del Sol, nubes, zonas con posible lluvia, radar de lluvia real, foto de satélite real y satélite europeo. Cada capa se activa y desactiva con su casilla.</li>
+      <li><b>Capas del mapa.</b> Mapa base (relieve, satélite, callejero), sombras de la orografía con su intensidad, relieve sombreado con el Sol actual, líneas del Sol, nubes, zonas con posible lluvia, radar de lluvia real, foto de satélite real, satélite europeo y cobertura de nieve. Cada capa se activa y desactiva con su casilla.</li>
     </ol>
 
     <h3>Qué significa cada elemento del mapa</h3>
@@ -433,14 +484,27 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
 
     <h3>Capas de nubes, lluvia y satélite</h3>
     <ul>
-      <li><b>Hay cinco capas y todas empiezan desactivadas</b> (no se recuerdan entre sesiones): tú las activas cuando las quieras. Dos son <b>previsión</b> (nubes y lluvia posible) y tres son <b>observación real</b> (radar de lluvia, foto de satélite de la NASA y satélite europeo). Mientras una esté desactivada no se consulta su servicio.</li>
+      <li><b>Hay seis capas y todas empiezan desactivadas</b> (no se recuerdan entre sesiones): tú las activas cuando las quieras. Dos son <b>previsión</b> (nubes y lluvia posible) y cuatro son <b>observación real</b> (radar de lluvia, foto de satélite de la NASA, satélite europeo y cobertura de nieve). Mientras una esté desactivada no se consulta su servicio.</li>
       <li><b>Nubes.</b> La cantidad dibujada es proporcional al porcentaje de nubosidad previsto: con un 30 % se cubre en torno al 30 % del área, con un 90 %, casi todo. Las nubes altas se ven más finas y las bajas y medias más densas. Si no se prevén nubes, la capa queda vacía. El porcentaje es el de la previsión, pero la <b>forma</b> de las manchas es ilustrativa: es un dibujo fijo anclado al terreno, que no cambia al acercar o alejar el mapa (solo se afina con más detalle al acercarte).</li>
       <li><b>Lluvia posible.</b> Las manchas ocupan una extensión parecida a la probabilidad de precipitación (por debajo del 10 % no se dibuja nada) y su color indica la intensidad prevista, de azul claro (débil) a violeta (fuerte). Para fechas pasadas, que no tienen probabilidad, se usa la precipitación registrada. La forma de las manchas también es ilustrativa.</li>
       <li><b>Radar de lluvia real</b> (solo para la fecha de hoy). Dibuja la lluvia que están midiendo los radares meteorológicos en el fotograma más cercano a la hora elegida (hay uno cada 10 minutos, de las últimas ~2 horas). Es una observación, no una previsión, y se ve igual a cualquier escala. No hay datos sobre el océano ni donde no hay radar. Su control «Intensidad» regula la opacidad (se recuerda).</li>
       <li><b>Foto de satélite real</b> (cualquier día desde julio de 2002 hasta hoy). Muestra la imagen en color real del satélite MODIS de la NASA para el día elegido (Terra antes de las 12:30, Aqua después). Es <b>una sola pasada al día</b> (hacia las 10:30 o las 13:30 hora solar), no la hora exacta que hayas elegido, y puede tener huecos entre pasadas. No es instantánea: para ver las nubes de otro momento del día en Europa usa el satélite europeo.</li>
       <li><b>Satélite europeo Meteosat</b> (desde finales de septiembre de 2024 hasta hoy). Imagen del satélite Meteosat de tercera generación de EUMETSAT, <b>cada 10 minutos</b>: la más cercana a la hora elegida, en color real de día y en infrarrojo de noche. Cubre Europa, África y el Atlántico. Al activarla la app pregunta a EUMETSAT qué horas hay disponibles; si el servicio no responde o el navegador lo bloquea, la nota bajo la casilla lo indica.</li>
+      <li><b>Cobertura de nieve</b> (cualquier día desde febrero de 2000 hasta hoy). Muestra la nieve que observó ese día el satélite MODIS Terra de la NASA (índice NDSI, unos 500 m de resolución): azul claro = nieve. Las nubes tapan el suelo, así que una zona sin color puede ser nube o falta de nieve; la de hoy puede estar incompleta. Para la nieve <i>prevista</i> mira «Niebla, nieve y aire».</li>
       <li><b>Con la hora.</b> Las de previsión cambian con el control deslizante y se desplazan con el viento. El radar y el satélite europeo muestran el fotograma disponible más cercano a la hora elegida; la foto de la NASA es la del día elegido. Las capas reales no se pueden mostrar para días futuros.</li>
       <li><b>Rejilla de previsión</b> (solo nubes y lluvia posible). Los datos salen de una rejilla de puntos que se adapta al zoom: de unos 16 a 144 puntos, separados 5, 10, 20, 40, 80 o 160 km (más finos cuanto más te acercas); la rejilla incluye una celda de margen alrededor de la vista, así que pequeños desplazamientos del mapa no necesitan datos nuevos. Bajo cada casilla se indica la rejilla en uso. Se ven desde un valle hasta toda la Península; con la vista más amplia de unos 1 300 km se ocultan.</li>
+    </ul>
+
+    <h3>Planificación avanzada</h3>
+    <p>Debajo de «Sol» y de «Vista desde la posición» hay bloques plegables (púlsalos para abrirlos). Los cálculos astronómicos se hacen en tu navegador; solo la meteorología se pide a Open-Meteo.</p>
+    <ul>
+      <li><b>Ventanas de luz.</b> Las cuatro franjas del día (hora azul y hora dorada, de amanecer y de atardecer) con su horario exacto, si la luz es <b>contraluz, lateral o frontal</b> respecto a la dirección de tu cámara, qué parte del encuadre recibe Sol y una valoración del cielo (favorable, aceptable o poco favorable) según nubes, lluvia y visibilidad previstas. Pulsa una franja para ir a esa hora. Arriba aparece la mejor combinación del día.</li>
+      <li><b>Mejor día.</b> Elige el primer día y cuántos (7, 10 o 16) y pulsa «Buscar el mejor día»: con una sola consulta a Open-Meteo puntúa de 0 a 100 el cielo en la salida y en la puesta del Sol de cada día (las nubes bajas restan, las medias y altas parciales suman color, y restan la lluvia, la niebla y la poca visibilidad). Las ★ marcan los mejores días; pulsa uno para verlo. Solo hay previsión hasta 15 días vista.</li>
+      <li><b>Luna y Vía Láctea.</b> Fase e iluminación de la Luna, su salida y su puesta, y su altura y acimut a la hora elegida. Para la Vía Láctea calcula cuándo el <b>núcleo galáctico</b> está a más de 8° sobre el horizonte con el cielo realmente oscuro (Sol por debajo de −18°), su altura máxima, hacia dónde mirar y los tramos <b>sin Luna</b>. Si no es temporada o no hay noche cerrada, lo dice. No incluye la contaminación lumínica del lugar.</li>
+      <li><b>Alineaciones Sol y Luna con el motivo.</b> Para el día elegido lista cuándo el Sol y la Luna cruzan la dirección posición → motivo y, si el relieve ya está calculado, si lo hacen a la altura de la parte alta del motivo (alineados) o por encima o por debajo. «Buscar alineaciones en el próximo año» recorre 366 días y lista los días (agrupados) en que el Sol o la Luna (con su fase) quedan a menos de 1,5° de altura de la cumbre; pulsa uno para ir a ese día y esa hora. La Luna se calcula con paralaje, imprescindible para este uso.</li>
+      <li><b>Comparar modelos de previsión</b> (bajo «Meteorología en el motivo»). Pide a Open-Meteo la nubosidad, la lluvia y la temperatura de cuatro modelos distintos (ECMWF, GFS, ICON y Météo-France) y muestra la <b>dispersión</b> entre ellos: si coinciden, la previsión es fiable; si discrepan mucho, tómala con margen.</li>
+      <li><b>Niebla, nieve y aire.</b> Al abrir este bloque se hacen tres consultas independientes a Open-Meteo. <i>Niebla y mar de nubes:</i> a partir del perfil vertical de temperatura y humedad detecta inversiones térmicas y capas de nube o niebla, y te dice si el motivo queda dentro de la capa (niebla) o por encima de ella (mar de nubes), con las horas previstas. <i>Nieve:</i> espesor en el suelo, nevada prevista y altura de la isoterma de 0 °C frente a la del motivo. <i>Calidad del aire:</i> turbidez (AOD), partículas y polvo en suspensión (calima), que afectan al contraste y a la nitidez de las lejanías. La nieve observada se ve con la capa «Cobertura de nieve».</li>
+      <li><b>Localizaciones y enlace.</b> «Guardar» memoriza el motivo, la posición, el radio y la altura con el nombre que escribas (y, si quieres, la fecha y la hora); «Abrir» las recupera. «Exportar» e «Importar» pasan la lista a un archivo (para copia de seguridad o para otro equipo). «Copiar enlace» crea una dirección que contiene la planificación actual (motivo, posición, fecha, hora, radio y altura); quien la abra la verá igual. «Abrir» (junto al campo «Pega un enlace o código») admite un enlace completo o solo el código tras el signo #. Para compartir enlaces con otras personas la página debe estar publicada (por ejemplo en GitHub Pages); desde el archivo local el enlace solo sirve en ese equipo.</li>
     </ul>
 
     <h3>Atajos y trucos</h3>
@@ -458,12 +522,14 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
         <tr><td><b>Relieve</b></td><td><a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a> de AWS (teselas Terrarium), <code>elevation-tiles-prod.s3.amazonaws.com</code>. Mosaico global que combina varias fuentes públicas de elevación (SRTM entre ellas); resolución efectiva de unos 30 m. Los valores bajo el nivel del mar (batimetría) se descartan: el mar se trata como una superficie plana a 0 m, de modo que el fondo marino no proyecta sombras ni aparece en el relieve (efecto secundario: las depresiones continentales bajo el nivel del mar, como el mar Muerto, se representan a 0 m).</td><td>Sombras del relieve, vista 3D, pendiente y orientación de la ladera, perfil de visibilidad.</td></tr>
         <tr><td><b>Meteorología (previsión)</b></td><td><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>, API de previsión (<code>api.open-meteo.com</code>), hasta 15 días vista. Combina varios modelos numéricos de forma automática. Datos bajo licencia CC BY 4.0.</td><td>Temperatura, humedad, nubes totales/bajas/medias/altas, precipitación y probabilidad, código de tiempo, visibilidad y viento en el motivo; y la rejilla de nubes y lluvia del mapa.</td></tr>
         <tr><td><b>Meteorología (fechas pasadas)</b></td><td>Open-Meteo: la misma API para los últimos ~3 meses, y la API de datos históricos / reanálisis (<code>archive-api.open-meteo.com</code>) para fechas anteriores.</td><td>Ver cómo estuvo el cielo en un día ya pasado. El reanálisis no incluye probabilidad ni visibilidad.</td></tr>
-        <tr><td><b>Astronomía</b></td><td><b>No consulta ninguna base de datos:</b> la posición del Sol, el amanecer, el atardecer y el crepúsculo se calculan en tu navegador con un algoritmo astronómico estándar (tipo Meeus / SunCalc), con refracción atmosférica. En las pruebas coincide con la referencia NREL SPA a menos de 0,3° y 2,2 minutos.</td><td>Altura y acimut del Sol, hora azul y dorada, sombras.</td></tr>
+        <tr><td><b>Astronomía</b></td><td><b>No consulta ninguna base de datos:</b> la posición del Sol, el amanecer, el atardecer y el crepúsculo se calculan en tu navegador con un algoritmo astronómico estándar (tipo Meeus / SunCalc), con refracción atmosférica. En las pruebas coincide con la referencia NREL SPA a menos de 0,3° y 2,2 minutos. La Luna usa la teoría lunar de Meeus con paralaje (en las pruebas, a menos de 0,02° de PyEphem) y el centro galáctico, coordenadas fijas (error < 0,35°).</td><td>Altura y acimut del Sol y de la Luna, fase, hora azul y dorada, sombras, Vía Láctea y alineaciones.</td></tr>
         <tr><td><b>Zona horaria</b></td><td>La zona horaria de cada lugar la indica Open-Meteo y se aplica con la base IANA del navegador (incluye los cambios de horario de verano). Hasta que responde se usa una estimación: Madrid o Canarias en España y, en el resto del mundo, el huso por longitud.</td><td>Mostrar la hora local correcta del lugar elegido.</td></tr>
         <tr><td><b>Búsqueda de lugares</b></td><td><a href="https://nominatim.org/" target="_blank" rel="noopener">Nominatim</a> (OpenStreetMap), en todo el mundo; si falla, <a href="https://photon.komoot.io/" target="_blank" rel="noopener">Photon</a> (Komoot, también con datos de OpenStreetMap). Ambos son gratuitos y no piden clave.</td><td>Ir a una ciudad, comarca, región, sierra, pico, río… de cualquier país por su nombre.</td></tr>
+        <tr><td><b>Modelos, perfil vertical, nieve y aire</b></td><td>Open-Meteo: previsión por modelos (<code>models=</code>: ECMWF IFS, GFS, ICON, Météo-France), niveles de presión (temperatura, humedad, nubes y altura de 1000 a 700 hPa), <code>snow_depth</code>, <code>snowfall</code> y <code>freezing_level_height</code>, y la API de calidad del aire (<code>air-quality-api.open-meteo.com</code>, modelo CAMS). Solo se piden al pulsar el botón o abrir el bloque.</td><td>«Mejor día», «Comparar modelos» y «Niebla, nieve y aire».</td></tr>
         <tr><td><b>Radar de lluvia</b></td><td><a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>, mosaico mundial de radares meteorológicos (<code>api.rainviewer.com</code>), fotogramas de las últimas ~2 h. Solo se consulta si activas la capa.</td><td>Ver la lluvia que está cayendo ahora (capa «Radar de lluvia real»).</td></tr>
         <tr><td><b>Foto de satélite</b></td><td><a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a> (<code>gibs.earthdata.nasa.gov</code>), imagen MODIS en color real de Terra y Aqua, desde julio de 2002. Solo se consulta si activas la capa.</td><td>Ver las nubes reales de un día concreto (capa «Foto de satélite real»); una pasada al día.</td></tr>
         <tr><td><b>Satélite europeo</b></td><td><a href="https://www.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a>, servicio EUMETView (<code>view.eumetsat.int</code>): Meteosat de tercera generación, color real e infrarrojo cada 10 min, desde septiembre de 2024. Datos CC BY 4.0: «Contains modified EUMETSAT Meteosat data». Solo se consulta si activas la capa.</td><td>Ver las nubes reales a la hora elegida sobre Europa y el Atlántico (capa «Satélite europeo Meteosat»).</td></tr>
+        <tr><td><b>Cobertura de nieve</b></td><td>NASA GIBS, producto diario <code>MODIS_Terra_NDSI_Snow_Cover</code>, desde febrero de 2000. Solo se consulta si activas la capa.</td><td>Ver la nieve observada un día concreto (capa «Cobertura de nieve»).</td></tr>
       </tbody>
     </table>
 
@@ -485,7 +551,8 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>Si se alcanza el tope, o el servicio responde que hay demasiadas peticiones, las capas se pausan unos minutos y lo avisan bajo la casilla; se reanudan solas.</li>
       <li>El radar de RainViewer permite unas 100 peticiones por minuto y dirección IP: la app pide teselas grandes (512 px) para no acercarse a ese límite, pero con mucho zoom o desplazamientos rápidos el radar puede pausarse unos segundos.</li>
       <li>La foto de satélite de la NASA y el satélite europeo de EUMETSAT se piden solo si activas su casilla, y cada una descarga únicamente las teselas visibles. Si un servicio no responde, o el navegador no le permite contestar, la nota bajo la casilla lo indica; basta desmarcar y volver a marcar para reintentarlo.</li>
-      <li>El navegador también guarda localmente tus puntos, el radio, la intensidad de las sombras y del radar, las opciones de las capas de sombras, relieve y líneas (no las cinco de nubes, lluvia y satélite) y tu idioma.</li>
+      <li>Los bloques de planificación avanzada solo consultan cuando tú lo pides: «Mejor día» y «Comparar modelos», una petición al pulsar el botón; «Niebla, nieve y aire», tres peticiones al abrir el bloque (y al cambiar de punto o de fecha mientras esté abierto). La capa «Cobertura de nieve» sigue la misma norma que las demás capas reales.</li>
+      <li>El navegador también guarda localmente tus puntos, el radio, la intensidad de las sombras y del radar, las opciones de las capas de sombras, relieve y líneas (no las de nubes, lluvia, satélite y nieve), tu idioma y las <b>localizaciones guardadas</b> (solo en este navegador; usa «Exportar» para conservarlas). Un enlace compartido solo contiene coordenadas, fecha, hora, radio y altura; no incluye nada más.</li>
     </ul>
 
     <h3>Límites que conviene conocer</h3>
@@ -493,6 +560,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>Fuera de España todo funciona (relieve, mapas y previsión son globales), pero está menos probado: comprueba que la hora local y el amanecer coinciden con lo que esperas. En latitudes polares el Sol puede no salir o no ponerse y algunas horas no existen.</li>
       <li>Las sombras son solo del relieve (modelo de 30–60 m): no incluyen árboles, edificios ni rocas pequeñas. El mapa de sombras no aplica la curvatura terrestre; el perfil de visibilidad sí.</li>
       <li>La <b>cantidad</b> de nubes y la probabilidad de lluvia salen de la previsión, pero la <b>forma</b> de las manchas es ilustrativa: la previsión no dice dónde está cada nube. Las nubes se dibujan planas sobre el terreno, no a su altura real.</li>
+      <li><b>Planificación avanzada.</b> La valoración del cielo y la puntuación de «Mejor día» son una regla sencilla sobre la previsión (no una medida): sirven para comparar días, no como garantía. «Niebla y mar de nubes» se deduce del perfil vertical de un modelo con celdas de varios kilómetros: es orientativo, sobre todo en valles estrechos, y la altura del modelo puede diferir de la del motivo. Las alineaciones usan la altura del relieve del modelo digital (30–60 m) y una tolerancia de ±1,5°; no tienen en cuenta árboles ni edificios. La Vía Láctea no considera la contaminación lumínica. Las capas de nieve y los datos de aire dependen de la disponibilidad de cada servicio.</li>
       <li><b>Radar y satélites.</b> El radar solo cubre las últimas ~2 horas (fecha de hoy) y no tiene datos sobre el océano ni donde no hay radar; su paleta de colores la fija el servicio. La foto de la NASA es una sola pasada al día (hacia las 10:30 o las 13:30 hora solar) y puede tener huecos. El satélite europeo cubre Europa, África y el Atlántico desde septiembre de 2024; fuera de ese disco no hay imagen.</li>
       <li>La meteorología del panel corresponde al punto del motivo; la de las capas, a la rejilla del zoom actual (muy aproximada en montaña, con microclima).</li>
       <li>La luz estimada es una guía orientativa, no una garantía. Mira siempre el cielo y los avisos oficiales (AEMET) antes de salir.</li>
@@ -521,7 +589,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li><b>Read the panel.</b> <i>Estimated light</i> summarises the quality of the light on the subject and how you will see it from your position (front, back or side light). <i>Weather</i> gives clouds by altitude, wind, precipitation and visibility. <i>Sun</i> gives azimuth, altitude and key times. <i>View from the position</i> tells you whether terrain blocks the subject.</li>
       <li><b>2D / 3D view.</b> The switch is at the top left of the map. In 3D, the “Tilt” control sets the angle; you can also tilt with the right mouse button dragging up or down (or Ctrl + drag). “View from the position” puts the camera at your position looking at the subject; Esc or “Back to map” returns.</li>
       <li><b>Rotate the map</b> (in 2D and 3D). Use the “Orientation” control, the right mouse button dragging sideways (or Ctrl + drag), or two fingers on a touch screen. “North up” resets it and “Face the subject” turns it towards the position → subject direction.</li>
-      <li><b>Map layers.</b> Base map (terrain, satellite, streets), terrain shadows with their intensity, hillshade using the current Sun, Sun lines, clouds, areas with possible rain, real rain radar, real satellite photo and European satellite. Each layer is switched on and off with its checkbox.</li>
+      <li><b>Map layers.</b> Base map (terrain, satellite, streets), terrain shadows with their intensity, hillshade using the current Sun, Sun lines, clouds, areas with possible rain, real rain radar, real satellite photo, European satellite and snow cover. Each layer is switched on and off with its checkbox.</li>
     </ol>
 
     <h3>What each element on the map means</h3>
@@ -538,14 +606,27 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
 
     <h3>Cloud, rain and satellite layers</h3>
     <ul>
-      <li><b>There are five layers and all start switched off</b> (they are not remembered between sessions): you turn them on when you want them. Two are <b>forecast</b> (clouds and possible rain) and three are <b>real observation</b> (rain radar, NASA satellite photo and European satellite). While a layer is off, its service is not queried.</li>
+      <li><b>There are six layers and all start switched off</b> (they are not remembered between sessions): you turn them on when you want them. Two are <b>forecast</b> (clouds and possible rain) and four are <b>real observation</b> (rain radar, NASA satellite photo, European satellite and snow cover). While a layer is off, its service is not queried.</li>
       <li><b>Clouds.</b> The amount drawn is proportional to the forecast cloud cover: with 30 % about 30 % of the area is covered, with 90 %, almost all of it. High clouds look thinner and low and mid clouds denser. If no clouds are forecast, the layer is empty. The percentage comes from the forecast, but the <b>shape</b> of the patches is illustrative: it is a fixed pattern anchored to the ground, which does not change when you zoom in or out (it only gains detail as you zoom in).</li>
       <li><b>Possible rain.</b> The patches cover an extent similar to the precipitation probability (below 10 % nothing is drawn) and their colour shows the forecast intensity, from light blue (light) to violet (heavy). For past dates, which have no probability, recorded precipitation is used. The shape of the patches is illustrative as well.</li>
       <li><b>Real rain radar</b> (today’s date only). It draws the rain currently measured by weather radars in the frame closest to the chosen time (one every 10 minutes, covering the last ~2 hours). It is an observation, not a forecast, and looks the same at any scale. There is no data over the ocean or where there is no radar. Its “Intensity” control sets the opacity (it is remembered).</li>
       <li><b>Real satellite photo</b> (any day from July 2002 to today). It shows NASA’s MODIS true-colour image for the chosen day (Terra before 12:30, Aqua after). It is <b>a single pass per day</b> (around 10:30 or 13:30 solar time), not the exact time you chose, and may have gaps between passes. It is not instantaneous: to see the clouds at other times of the day in Europe use the European satellite.</li>
       <li><b>European satellite Meteosat</b> (from late September 2024 to today). Image from EUMETSAT’s third-generation Meteosat satellite, <b>every 10 minutes</b>: the one closest to the chosen time, in true colour by day and infrared at night. It covers Europe, Africa and the Atlantic. When switched on, the app asks EUMETSAT which times are available; if the service does not respond or the browser blocks it, the note under the checkbox says so.</li>
+      <li><b>Snow cover</b> (any day from February 2000 to today). Shows the snow observed that day by NASA’s MODIS Terra satellite (NDSI index, about 500 m resolution): light blue = snow. Clouds hide the ground, so an uncoloured area may be cloud or no snow; today’s may be incomplete. For <i>forecast</i> snow see “Fog, snow and air”.</li>
       <li><b>With the time.</b> The forecast layers change with the slider and drift with the wind. The radar and the European satellite show the available frame closest to the chosen time; the NASA photo is the one for the chosen day. The real layers cannot be shown for future days.</li>
       <li><b>Forecast grid</b> (clouds and possible rain only). The data comes from a grid of points that adapts to the zoom: from about 16 to 144 points, 5, 10, 20, 40, 80 or 160 km apart (finer as you zoom in); the grid includes a one-cell margin around the view, so small pans do not need new data. The grid in use is shown under each checkbox. They can be seen from a valley to the whole Iberian Peninsula; with a view wider than about 1,300 km they are hidden.</li>
+    </ul>
+
+    <h3>Advanced planning</h3>
+    <p>Below “Sun” and “View from the position” there are collapsible blocks (tap them to open). Astronomical calculations are done in your browser; only the weather is requested from Open-Meteo.</p>
+    <ul>
+      <li><b>Light windows.</b> The four slots of the day (blue hour and golden hour, at sunrise and sunset) with exact times, whether the light is <b>backlight, side or front light</b> relative to your camera direction, how much of the frame receives Sun, and a sky rating (favourable, fair or unfavourable) from the forecast clouds, rain and visibility. Tap a slot to go to that time. The best combination of the day is shown on top.</li>
+      <li><b>Best day.</b> Choose the first day and how many (7, 10 or 16) and press “Find the best day”: with a single Open-Meteo request it scores the sky from 0 to 100 at each day’s sunrise and sunset (low clouds subtract, partial mid and high clouds add colour, and rain, fog and poor visibility subtract). ★ marks the best days; tap one to view it. The forecast only reaches 15 days ahead.</li>
+      <li><b>Moon and Milky Way.</b> Moon phase and illumination, moonrise and moonset, and its altitude and azimuth at the chosen time. For the Milky Way it computes when the <b>galactic core</b> is more than 8° above the horizon with a truly dark sky (Sun below −18°), its maximum altitude, where to look, and the <b>Moon-free</b> periods. If it is out of season or the night never gets dark, it says so. It does not include local light pollution.</li>
+      <li><b>Sun and Moon alignments with the subject.</b> For the chosen day it lists when the Sun and Moon cross the position → subject direction and, once the terrain is computed, whether they do so at the height of the top of the subject (aligned) or above or below it. “Search alignments in the next year” scans 366 days and lists the days (grouped) when the Sun or Moon (with its phase) is within 1.5° of altitude of the summit; tap one to go to that day and time. The Moon is computed with parallax, which is essential for this use.</li>
+      <li><b>Compare forecast models</b> (under “Weather at the subject”). Asks Open-Meteo for cloud cover, rain and temperature from four different models (ECMWF, GFS, ICON and Météo-France) and shows the <b>spread</b> between them: if they agree the forecast is reliable; if they disagree strongly, allow some margin.</li>
+      <li><b>Fog, snow and air.</b> Opening this block makes three independent requests to Open-Meteo. <i>Fog and cloud sea:</i> from the vertical profile of temperature and humidity it detects temperature inversions and cloud or fog layers, and tells you whether the subject is inside the layer (fog) or above it (cloud sea), with the expected hours. <i>Snow:</i> depth on the ground, forecast snowfall and the height of the 0 °C level compared with the subject’s. <i>Air quality:</i> haziness (AOD), particulates and suspended dust (calima), which affect contrast and the clarity of distances. Observed snow is shown by the “Snow cover” layer.</li>
+      <li><b>Saved places and link.</b> “Save” stores the subject, position, radius and height under the name you type (and, if you wish, the date and time); “Open” restores them. “Export” and “Import” move the list to a file (as a backup or for another computer). “Copy link” creates an address containing the current plan (subject, position, date, time, radius and height); whoever opens it sees the same thing. “Open” (next to the “Paste a link or code” field) accepts a full link or just the code after the # sign. To share links with other people the page must be published (for example on GitHub Pages); from the local file the link only works on that computer.</li>
     </ul>
 
     <h3>Keyboard and mouse tips</h3>
@@ -563,12 +644,14 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
         <tr><td><b>Terrain</b></td><td><a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a> from AWS (Terrarium tiles), <code>elevation-tiles-prod.s3.amazonaws.com</code>. A global mosaic combining several public elevation sources (SRTM among them); effective resolution of about 30 m. Values below sea level (bathymetry) are discarded: the sea is treated as a flat surface at 0 m, so the seabed casts no shadows and does not appear in the relief (side effect: continental depressions below sea level, such as the Dead Sea, are represented at 0 m).</td><td>Terrain shadows, 3D view, slope and aspect of the hillside, line-of-sight profile.</td></tr>
         <tr><td><b>Weather (forecast)</b></td><td><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>, forecast API (<code>api.open-meteo.com</code>), up to 15 days ahead. It automatically combines several numerical models. Data under the CC BY 4.0 licence.</td><td>Temperature, humidity, total/low/mid/high cloud cover, precipitation and probability, weather code, visibility and wind at the subject; and the cloud and rain grid on the map.</td></tr>
         <tr><td><b>Weather (past dates)</b></td><td>Open-Meteo: the same API for the last ~3 months, and the historical / reanalysis API (<code>archive-api.open-meteo.com</code>) for earlier dates.</td><td>See what the sky was like on a past day. Reanalysis does not include probability or visibility.</td></tr>
-        <tr><td><b>Astronomy</b></td><td><b>It queries no database:</b> the position of the Sun, sunrise, sunset and twilight are computed in your browser with a standard astronomical algorithm (Meeus / SunCalc type), including atmospheric refraction. In tests it agrees with the NREL SPA reference to within 0.3° and 2.2 minutes.</td><td>Sun altitude and azimuth, blue and golden hour, shadows.</td></tr>
+        <tr><td><b>Astronomy</b></td><td><b>It queries no database:</b> the position of the Sun, sunrise, sunset and twilight are computed in your browser with a standard astronomical algorithm (Meeus / SunCalc type), including atmospheric refraction. In tests it agrees with the NREL SPA reference to within 0.3° and 2.2 minutes. The Moon uses Meeus’s lunar theory with parallax (in tests, within 0.02° of PyEphem) and the galactic centre uses fixed coordinates (error < 0.35°).</td><td>Sun and Moon altitude and azimuth, phase, blue and golden hour, shadows, Milky Way and alignments.</td></tr>
         <tr><td><b>Time zone</b></td><td>The time zone of each place is given by Open-Meteo and applied with the browser's IANA database (which includes daylight-saving changes). Until it responds an estimate is used: Madrid or the Canary Islands in Spain and, elsewhere in the world, the zone by longitude.</td><td>Show the correct local time of the chosen place.</td></tr>
         <tr><td><b>Place search</b></td><td><a href="https://nominatim.org/" target="_blank" rel="noopener">Nominatim</a> (OpenStreetMap), worldwide; if it fails, <a href="https://photon.komoot.io/" target="_blank" rel="noopener">Photon</a> (Komoot, also with OpenStreetMap data). Both are free and need no key.</td><td>Go to a city, district, region, mountain range, peak, river… in any country by name.</td></tr>
+        <tr><td><b>Models, vertical profile, snow and air</b></td><td>Open-Meteo: per-model forecast (<code>models=</code>: ECMWF IFS, GFS, ICON, Météo-France), pressure levels (temperature, humidity, cloud and height from 1000 to 700 hPa), <code>snow_depth</code>, <code>snowfall</code> and <code>freezing_level_height</code>, and the air-quality API (<code>air-quality-api.open-meteo.com</code>, CAMS model). Only requested when you press the button or open the block.</td><td>“Best day”, “Compare forecast models” and “Fog, snow and air”.</td></tr>
         <tr><td><b>Rain radar</b></td><td><a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>, global mosaic of weather radars (<code>api.rainviewer.com</code>), frames from the last ~2 h. Only queried if you switch the layer on.</td><td>See the rain that is falling now (“Real rain radar” layer).</td></tr>
         <tr><td><b>Satellite photo</b></td><td><a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA GIBS</a> (<code>gibs.earthdata.nasa.gov</code>), MODIS true-colour imagery from Terra and Aqua, since July 2002. Only queried if you switch the layer on.</td><td>See the real clouds of a given day (“Real satellite photo” layer); one pass per day.</td></tr>
         <tr><td><b>European satellite</b></td><td><a href="https://www.eumetsat.int/" target="_blank" rel="noopener">EUMETSAT</a>, EUMETView service (<code>view.eumetsat.int</code>): third-generation Meteosat, true colour and infrared every 10 min, since September 2024. Data CC BY 4.0: “Contains modified EUMETSAT Meteosat data”. Only queried if you switch the layer on.</td><td>See the real clouds at the chosen time over Europe and the Atlantic (“European satellite Meteosat” layer).</td></tr>
+        <tr><td><b>Snow cover</b></td><td>NASA GIBS, daily product <code>MODIS_Terra_NDSI_Snow_Cover</code>, since February 2000. Only queried if you switch the layer on.</td><td>See the snow observed on a given day (“Snow cover” layer).</td></tr>
       </tbody>
     </table>
 
@@ -590,7 +673,8 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>If the cap is reached, or the service replies that there are too many requests, the layers pause for a few minutes and say so under the checkbox; they resume on their own.</li>
       <li>The RainViewer radar allows about 100 requests per minute per IP address: the app asks for large tiles (512 px) to stay well below that limit, but with a lot of zooming or fast panning the radar may pause for a few seconds.</li>
       <li>The NASA satellite photo and the EUMETSAT European satellite are requested only if you tick their checkbox, and each downloads only the visible tiles. If a service does not respond, or the browser does not allow it to answer, the note under the checkbox says so; untick and tick the box again to retry.</li>
-      <li>Your browser also stores locally your points, the radius, the shadow and radar intensity, the options of the shadow, relief and line layers (not the five cloud, rain and satellite layers) and your language choice.</li>
+      <li>The advanced planning blocks only query when you ask: “Best day” and “Compare forecast models”, one request when you press the button; “Fog, snow and air”, three requests when you open the block (and when you change point or date while it is open). The “Snow cover” layer follows the same rule as the other real layers.</li>
+      <li>Your browser also stores locally your points, the radius, the shadow and radar intensity, the options of the shadow, relief and line layers (not the cloud, rain, satellite and snow layers), your language choice and your <b>saved places</b> (only in this browser; use “Export” to keep them). A shared link only contains coordinates, date, time, radius and height; nothing else.</li>
     </ul>
 
     <h3>Limits worth knowing</h3>
@@ -598,6 +682,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
       <li>Outside Spain everything works (terrain, maps and forecast are global), but it is less tested: check that local time and sunrise match what you expect. At polar latitudes the Sun may not rise or set and some times do not exist.</li>
       <li>Shadows come from terrain only (30–60 m model): they do not include trees, buildings or small rocks. The shadow map does not apply Earth curvature; the line-of-sight profile does.</li>
       <li>The <b>amount</b> of cloud and the probability of rain come from the forecast, but the <b>shape</b> of the patches is illustrative: the forecast does not say where each cloud is. Clouds are drawn flat on the terrain, not at their real height.</li>
+      <li><b>Advanced planning.</b> The sky rating and the “Best day” score are a simple rule applied to the forecast (not a measurement): they are meant to compare days, not as a guarantee. “Fog and cloud sea” is inferred from a model’s vertical profile with cells several kilometres wide: it is indicative, especially in narrow valleys, and the model’s height may differ from the subject’s. Alignments use the terrain height from the digital model (30–60 m) and a tolerance of ±1.5°; they ignore trees and buildings. The Milky Way ignores light pollution. The snow and air data depend on each service’s availability.</li>
       <li><b>Radar and satellites.</b> The radar only covers the last ~2 hours (today’s date) and has no data over the ocean or where there is no radar; its colour palette is set by the service. The NASA photo is a single pass per day (around 10:30 or 13:30 solar time) and may have gaps. The European satellite covers Europe, Africa and the Atlantic since September 2024; there is no image outside that disc.</li>
       <li>The weather in the panel corresponds to the subject's point; that of the layers, to the grid for the current zoom (very approximate in mountains, with microclimates).</li>
       <li>The estimated light is an indicative guide, not a guarantee. Always look at the sky and the official warnings (AEMET in Spain) before setting out.</li>
@@ -1178,6 +1263,224 @@ return maplibregl$1;
     return rgba;
   }
 
+
+  /* ---------- Luna, Vía Láctea, ventanas de luz, alineaciones (SunCalc/Meeus simplificado) ---------- */
+  /* Teoría lunar de Meeus (cap. 47, términos principales): error < ~0,1° (la serie corta de SunCalc llegaba a ~1,8°). */
+  const ML = [[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048],[2,0,1,-2,-1773],[2,0,0,2,-1595],[4,-1,-1,0,1215],[0,0,2,2,-1110],[3,0,-1,0,-892],[2,1,1,0,-810],[4,-1,-2,0,759],[0,2,-1,0,-713],[2,2,-1,0,-700],[2,1,-2,0,691],[2,-1,0,-2,596],[4,0,1,0,549],[0,0,4,0,537],[4,-1,0,0,520],[1,0,-2,0,-487]];
+  const MB = [[0,0,0,1,5128122],[0,0,1,1,280602],[0,0,1,-1,277693],[2,0,0,-1,173237],[2,0,-1,1,55413],[2,0,-1,-1,46271],[2,0,0,1,32573],[0,0,2,1,17198],[2,0,1,-1,9266],[0,0,2,-1,8822],[2,-1,0,-1,8216],[2,0,-2,-1,4324],[2,0,1,1,4200],[2,1,0,-1,-3359],[2,-1,-1,1,2463],[2,-1,0,1,2211],[2,-1,-1,-1,2065],[0,1,-1,-1,-1870],[4,0,-1,-1,1828],[0,1,0,1,-1794],[0,0,0,3,-1749],[0,1,-1,1,-1565],[1,0,0,1,-1491],[0,1,1,1,-1475],[0,1,1,-1,-1410],[0,1,0,-1,-1344],[1,0,0,-1,-1335],[0,0,3,1,1107],[4,0,0,-1,1021],[4,0,-1,1,833]];
+  const MR = [[0,0,1,0,-20905355],[2,0,-1,0,-3699111],[2,0,0,0,-2955968],[0,0,2,0,-569925],[0,1,0,0,48888],[0,0,0,2,-3149],[2,0,-2,0,246158],[2,-1,-1,0,-152138],[2,0,1,0,-170733],[2,-1,0,0,-204586],[0,1,-1,0,-129620],[1,0,0,0,108743],[0,1,1,0,104755]];
+  function moonCoords(d) {
+    const T = d / 36525, r = x => norm360(x) * RAD;
+    const Lp = 218.3164477 + 481267.88123421 * T, D = r(297.8501921 + 445267.1114034 * T), M = r(357.5291092 + 35999.0502909 * T),
+      Mp = r(134.9633964 + 477198.8675055 * T), F = r(93.2720950 + 483202.0175233 * T), E = 1 - 0.002516 * T - 0.0000074 * T * T;
+    const A1 = r(119.75 + 131.849 * T), A2 = r(53.09 + 479264.290 * T), A3 = r(313.45 + 481266.484 * T), Lr = r(Lp);
+    const ef = m => Math.abs(m) === 1 ? E : Math.abs(m) === 2 ? E * E : 1;
+    let sl = 0, sb = 0, sr = 0;
+    for (const t of ML) sl += t[4] * ef(t[1]) * Math.sin(t[0] * D + t[1] * M + t[2] * Mp + t[3] * F);
+    for (const t of MR) sr += t[4] * ef(t[1]) * Math.cos(t[0] * D + t[1] * M + t[2] * Mp + t[3] * F);
+    for (const t of MB) sb += t[4] * ef(t[1]) * Math.sin(t[0] * D + t[1] * M + t[2] * Mp + t[3] * F);
+    sl += 3958 * Math.sin(A1) + 1962 * Math.sin(Lr - F) + 318 * Math.sin(A2);
+    sb += -2235 * Math.sin(Lr) + 382 * Math.sin(A3) + 175 * Math.sin(A1 - F) + 175 * Math.sin(A1 + F) + 127 * Math.sin(Lr - Mp) - 115 * Math.sin(Lr + Mp);
+    const l = RAD * (Lp + sl / 1e6), b = RAD * (sb / 1e6), dist = 385000.56 + sr / 1000;
+    return { ra: rightAscension(l, b), dec: declination(l, b), dist };
+  }
+  /* Posición topocéntrica: altura corregida de paralaje (hasta ~1°, imprescindible para alinear la Luna con una cumbre). */
+  function moonPosition(ms, lat, lon) {
+    const lw = RAD * -lon, phi = RAD * lat, d = toDays(ms), c = moonCoords(d), H = RAD * (280.46061837 + 360.98564736629 * d) - lw - c.ra; // coordenadas «de la fecha» + tiempo sidéreo de Greenwich exacto
+    const az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(phi) - Math.tan(c.dec) * Math.cos(phi));
+    let h = Math.asin(Math.sin(phi) * Math.sin(c.dec) + Math.cos(phi) * Math.cos(c.dec) * Math.cos(H));
+    h -= Math.asin(6371 / c.dist) * Math.cos(h);
+    return { az: norm360(az * DEG + 180), alt: h * DEG, altApp: (h + (h > -RAD ? astroRefraction(h) : 0)) * DEG, dist: c.dist };
+  }
+  /* fraction: parte iluminada (0–1); phase: 0 nueva, 0.25 cuarto creciente, 0.5 llena, 0.75 cuarto menguante */
+  function moonIllumination(ms) {
+    const d = toDays(ms), s = sunCoords(d), m = moonCoords(d), sdist = 149598000;
+    const phi = Math.acos(clamp(Math.sin(s.dec) * Math.sin(m.dec) + Math.cos(s.dec) * Math.cos(m.dec) * Math.cos(s.ra - m.ra), -1, 1));
+    const inc = Math.atan2(sdist * Math.sin(phi), m.dist - sdist * Math.cos(phi));
+    const angle = Math.atan2(Math.cos(s.dec) * Math.sin(s.ra - m.ra), Math.sin(s.dec) * Math.cos(m.dec) - Math.cos(s.dec) * Math.sin(m.dec) * Math.cos(s.ra - m.ra));
+    return { fraction: (1 + Math.cos(inc)) / 2, phase: 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI };
+  }
+  /* Centro galáctico (Sagitario A*): AR 17h45m40s, Dec −29°00′28″ */
+  function galacticCenterPosition(ms, lat, lon) {
+    const lw = RAD * -lon, phi = RAD * lat, d = toDays(ms), ra = RAD * 266.4168, dec = RAD * -28.9362, H = siderealTime(d, lw) - ra;
+    const az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(phi) - Math.tan(dec) * Math.cos(phi));
+    const h = Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H));
+    return { az: norm360(az * DEG + 180), alt: h * DEG };
+  }
+  function bodyPos(body, ms, lat, lon) {
+    return body === 'moon' ? moonPosition(ms, lat, lon) : body === 'mw' ? galacticCenterPosition(ms, lat, lon) : sunPosition(ms, lat, lon);
+  }
+  /* Cruces de la altura de un astro con un nivel (grados) entre t0 y t1, refinados por bisección. */
+  function altCrossings(body, lat, lon, t0, t1, level, stepMs) {
+    stepMs = stepMs || 300000; const out = [], f = ms => bodyPos(body, ms, lat, lon).alt - level;
+    let a = t0, fa = f(a);
+    for (let b = t0 + stepMs; b <= t1 + 1; b += stepMs) {
+      const fb = f(b);
+      if ((fa < 0) !== (fb < 0)) {
+        let lo = a, hi = b, flo = fa;
+        for (let i = 0; i < 18; i++) { const mid = (lo + hi) / 2, fm = f(mid); if ((fm < 0) === (flo < 0)) { lo = mid; flo = fm; } else hi = mid; }
+        out.push({ ms: (lo + hi) / 2, rising: fb > fa });
+      }
+      a = b; fa = fb;
+    }
+    return out;
+  }
+  /* Salida y puesta de la Luna entre t0 y t1 (nivel −0,83° con paralaje ya aplicado). */
+  function moonTimes(t0, t1, lat, lon) {
+    const c = altCrossings('moon', lat, lon, t0, t1, -0.833, 240000);
+    return { rise: c.filter(x => x.rising).map(x => x.ms), set: c.filter(x => !x.rising).map(x => x.ms) };
+  }
+  /* Ventanas en las que el núcleo de la Vía Láctea está sobre minAlt con el cielo en noche astronómica (Sol < −18°).
+     Cada ventana incluye la altura máxima y los tramos sin Luna (Luna bajo el horizonte o < 10 % iluminada). */
+  function milkyWayWindows(t0, t1, lat, lon, minAlt) {
+    minAlt = minAlt == null ? 8 : minAlt; const step = 300000, wins = []; let cur = null, prevMoonFree = false;
+    for (let t = t0; t <= t1; t += step) {
+      const sun = sunPosition(t, lat, lon).alt, mw = galacticCenterPosition(t, lat, lon);
+      const ok = sun <= -18 && mw.alt >= minAlt;
+      if (ok) {
+        const mo = moonPosition(t, lat, lon), free = mo.alt < -0.5 || moonIllumination(t).fraction < 0.1;
+        if (!cur) { cur = { from: t, to: t, maxAlt: mw.alt, maxAz: mw.az, moonFree: [] }; prevMoonFree = false; }
+        cur.to = t; if (mw.alt > cur.maxAlt) { cur.maxAlt = mw.alt; cur.maxAz = mw.az; }
+        if (free) { if (!prevMoonFree) cur.moonFree.push([t, t]); else cur.moonFree[cur.moonFree.length - 1][1] = t; }
+        prevMoonFree = free;
+      } else if (cur) { wins.push(cur); cur = null; }
+    }
+    if (cur) wins.push(cur);
+    return wins;
+  }
+  /* Ventanas de luz del día (hora azul −8°…−4° y hora dorada −4°…+6°, amanecer y atardecer) con la relación entre la
+     dirección del Sol y la de la cámara (brg: acimut observador → motivo): contraluz / lateral / luz frontal. */
+  function lightWindows(t0, lat, lon, brg) {
+    const out = []; let cur = null;
+    const cls = a => a > -8 && a <= -4 ? 'blue' : a > -4 && a <= 6 ? 'golden' : null;
+    const close = t => { if (!cur) return; cur.to = t; const mid = (cur.from + cur.to) / 2, p = sunPosition(mid, lat, lon); cur.az = p.az; cur.alt = p.alt;
+      const d = brg == null ? null : Math.abs(angDiff(p.az, brg)); cur.rel = d == null ? null : d < 35 ? 'contra' : d > 145 ? 'frontal' : 'lateral'; out.push(cur); cur = null; };
+    let prev = sunPosition(t0, lat, lon).alt;
+    for (let m = 0; m <= 1440; m++) {
+      const t = t0 + m * 60000, a = m === 0 ? prev : sunPosition(t, lat, lon).alt, k = cls(a);
+      if (cur && (!k || k !== cur.kind)) close(t);
+      if (k && !cur) cur = { kind: k, from: t, to: t, am: a >= prev };
+      prev = a;
+    }
+    close(t0 + 1440 * 60000);
+    return out;
+  }
+  /* Instantes en que el astro cruza el acimut brg (mismo rumbo que el motivo visto desde la posición). */
+  function azCrossings(body, lat, lon, brg, t0, t1, stepMs) {
+    stepMs = stepMs || 180000; const out = [], f = ms => angDiff(bodyPos(body, ms, lat, lon).az, brg);
+    let a = t0, fa = f(a);
+    for (let b = t0 + stepMs; b <= t1 + 1; b += stepMs) {
+      const fb = f(b);
+      if (fa * fb <= 0 && Math.abs(fa) < 25 && Math.abs(fb) < 25 && fa !== fb) {
+        let lo = a, hi = b, flo = fa;
+        for (let i = 0; i < 18; i++) { const mid = (lo + hi) / 2, fm = f(mid); if (fm * flo > 0) { lo = mid; flo = fm; } else hi = mid; }
+        const ms = (lo + hi) / 2, p = bodyPos(body, ms, lat, lon);
+        out.push({ ms, alt: p.altApp, az: p.az });
+      }
+      a = b; fa = fb;
+    }
+    return out;
+  }
+  /* Alineaciones Sol/Luna con el motivo: cruces de acimut cuya altura coincide (±tolAlt) con el ángulo con que se ve
+     la parte alta del motivo (topAngle). Devuelve, por día, el mejor cruce. startMs = inicio de un día local. */
+  function findAlignments(o) {
+    const tol = o.tolAlt == null ? 1.5 : o.tolAlt, res = [];
+    for (let i = 0; i < o.days; i++) {
+      const t0 = o.startMs + i * 86400000;
+      for (const body of o.bodies || ['sun', 'moon']) {
+        let best = null;
+        for (const c of azCrossings(body, o.lat, o.lon, o.brg, t0, t0 + 86400000, body === 'moon' ? 240000 : 180000)) {
+          const off = c.alt - o.topAngle;
+          if (c.alt < -1 || Math.abs(off) > tol) continue;
+          if (!best || Math.abs(off) < Math.abs(best.off)) best = { day: i, body, ms: c.ms, alt: c.alt, az: c.az, off };
+        }
+        if (best) { if (body === 'moon') best.illum = moonIllumination(best.ms).fraction; res.push(best); }
+      }
+    }
+    return res;
+  }
+  const tri = (x, a, b, c) => x <= a || x >= c ? 0 : x < b ? (x - a) / (b - a) : (c - x) / (c - b);
+  /* Puntuación 0–100 del cielo para una foto de amanecer/atardecer a partir de la previsión (nubes bajas tapan el Sol;
+     nubes medias y altas parciales dan color; precipitación, niebla y poca visibilidad restan). */
+  function photoScore(w) {
+    if (!w) return null;
+    const g = (v, d) => (v == null || !isFinite(v)) ? d : v;
+    const low = g(w.cloud_cover_low, 0), mid = g(w.cloud_cover_mid, 0), high = g(w.cloud_cover_high, 0), tot = g(w.cloud_cover, Math.max(low, mid, high));
+    const pr = g(w.precipitation, 0), vis = g(w.visibility, 24000), code = g(w.weather_code, 0);
+    let s = 78;
+    s -= 0.6 * low;
+    s += 20 * tri(Math.max(mid, high), 8, 45, 90);
+    if (tot >= 90) s -= 18; else if (tot < 8) s -= 4;
+    s -= Math.min(55, 50 * pr);
+    if (code === 45 || code === 48) s -= 30; else if (code >= 95) s -= 30; else if (code >= 61 && code !== 45) s -= 12;
+    if (vis < 10000) s -= (10000 - vis) / 10000 * 25;
+    return Math.round(clamp(s, 0, 100));
+  }
+  /* Perfil vertical: levels = [{z (m), t (°C), rh (%), cc (%)}] (cualquier orden). Detecta inversiones térmicas
+     (T sube con la altura) y la capa de nube/niebla (HR ≥ 93 % o nubosidad ≥ 65 %) frente a la altura del motivo zT.
+     verdict: 'inside' (el motivo está dentro de la capa: niebla), 'sea' (techo de la capa bajo el motivo con cielo
+     despejado encima: mar de nubes), 'above' (capa por encima del motivo), 'none'. */
+  function inversionProfile(levels, zT) {
+    const L = levels.filter(l => l && isFinite(l.z) && isFinite(l.t)).sort((a, b) => a.z - b.z);
+    const inv = [];
+    for (let i = 0; i + 1 < L.length; i++) { const dT = L[i + 1].t - L[i].t; if (dT >= 0.5) inv.push({ zBase: L[i].z, zTop: L[i + 1].z, dT }); }
+    const wet = l => (l.rh != null && l.rh >= 93) || (l.cc != null && l.cc >= 65);
+    const idx = []; L.forEach((l, i) => { if (wet(l)) idx.push(i); });
+    let layer = null;
+    if (idx.length) {
+      const i0 = idx[0], i1 = idx[idx.length - 1];
+      layer = { zBase: i0 === 0 ? L[0].z : (L[i0 - 1].z + L[i0].z) / 2, zTop: i1 === L.length - 1 ? L[i1].z : (L[i1].z + L[i1 + 1].z) / 2 };
+    }
+    let verdict = 'none';
+    if (layer) {
+      const above = L.filter(l => l.z > layer.zTop + 1), clearAbove = above.length === 0 || above.every(l => (l.rh == null || l.rh < 85) && (l.cc == null || l.cc < 50));
+      if (zT >= layer.zBase - 30 && zT <= layer.zTop + 30) verdict = 'inside';
+      else if (zT > layer.zTop + 100 && layer.zTop - layer.zBase >= 100 && clearAbove) verdict = 'sea';
+      else if (zT < layer.zBase - 30) verdict = 'above';
+    }
+    return { inversions: inv, strongest: inv.length ? inv.reduce((a, b) => b.dT > a.dT ? b : a) : null, layer, verdict };
+  }
+  const validDate = v => { const q = parseDate(v); if (!q) return false; const t = new Date(Date.UTC(q.y, q.mo - 1, q.d)); return t.getUTCFullYear() === q.y && t.getUTCMonth() === q.mo - 1 && t.getUTCDate() === q.d; };
+  /* Enlaces: t=lat,lon · o=lat,lon · d=fecha · m=minuto · r=radio · h=altura del motivo */
+  function encodeShare(st) {
+    const f = v => (+v).toFixed(5).replace(/0+$/, '').replace(/\.$/, ''), parts = [];
+    parts.push('t=' + f(st.target.lat) + ',' + f(st.target.lon), 'o=' + f(st.observer.lat) + ',' + f(st.observer.lon));
+    if (st.date) parts.push('d=' + st.date);
+    if (st.min != null) parts.push('m=' + Math.round(st.min));
+    if (st.radius != null) parts.push('r=' + Math.round(st.radius));
+    if (st.targetH != null) parts.push('h=' + Math.round(st.targetH));
+    return parts.join('&');
+  }
+  function decodeShare(txt) {
+    if (typeof txt !== 'string') return null;
+    const q = txt.includes('#') ? txt.slice(txt.indexOf('#') + 1) : txt, o = {}, m = {};
+    q.replace(/^[#?]+/, '').replace(/^p=/, '').split('&').forEach(kv => { const i = kv.indexOf('='); if (i > 0) m[kv.slice(0, i)] = kv.slice(i + 1); });
+    const pt = v => { const a = String(v || '').split(',').map(Number); return a.length === 2 && a.every(isFinite) && Math.abs(a[0]) < 85 && Math.abs(a[1]) <= 180 ? { lat: a[0], lon: a[1] } : null; };
+    const t = pt(m.t), ob = pt(m.o); if (!t || !ob) return null;
+    o.target = t; o.observer = ob;
+    if (validDate(m.d || '')) o.date = m.d;
+    if (m.m != null && isFinite(+m.m) && +m.m >= 0 && +m.m <= 1439) o.min = Math.round(+m.m);
+    if (m.r != null && isFinite(+m.r) && +m.r >= 50 && +m.r <= 20000) o.radius = Math.round(+m.r);
+    if (m.h != null && isFinite(+m.h) && +m.h >= 0 && +m.h <= 9000) o.targetH = Math.round(+m.h);
+    return o;
+  }
+  /* Localizaciones guardadas: valida y limpia una lista importada (JSON de usuario = datos no fiables). */
+  function sanitizePlaces(arr) {
+    if (!Array.isArray(arr)) return [];
+    const okp = p => p && isFinite(p.lat) && isFinite(p.lon) && Math.abs(p.lat) < 85 && Math.abs(p.lon) <= 180;
+    const out = [];
+    for (const x of arr.slice(0, 500)) {
+      if (!x || typeof x.name !== 'string' || !okp(x.target) || !okp(x.observer)) continue;
+      const p = { name: x.name.replace(/<[^>]*>/g, '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80), target: { lat: +x.target.lat, lon: +x.target.lon }, observer: { lat: +x.observer.lat, lon: +x.observer.lon } };
+      if (!p.name) continue;
+      if (isFinite(x.radius) && x.radius >= 50 && x.radius <= 20000) p.radius = Math.round(+x.radius);
+      if (isFinite(x.targetH) && x.targetH >= 0 && x.targetH <= 9000) p.targetH = Math.round(+x.targetH);
+      if (typeof x.date === 'string' && validDate(x.date)) { p.date = x.date; if (isFinite(x.min) && x.min >= 0 && x.min <= 1439) p.min = Math.round(+x.min); }
+      out.push(p);
+    }
+    return out;
+  }
+
   return {
     RAD, DEG, R_EARTH, EQ, K_REF, clamp, norm360, angDiff,
     destPoint, bearingTo, distanceTo, cardinal,
@@ -1189,7 +1492,9 @@ return maplibregl$1;
     sunVisible, sunflower, zoneLit, destPointFast,
     shadowDepth, renderShadow,
     slopeAspect, sunVec, dot, losProfile,
-    fbm, noiseCdf, sampleGrid, renderClouds, renderRain
+    fbm, noiseCdf, sampleGrid, renderClouds, renderRain,
+    moonPosition, moonIllumination, galacticCenterPosition, moonTimes, milkyWayWindows, lightWindows, azCrossings, findAlignments,
+    photoScore, inversionProfile, encodeShare, decodeShare, sanitizePlaces
   };
 });
 
@@ -1224,7 +1529,7 @@ const sgn = v => (v >= 0 ? '+' : '−') + nf(Math.abs(v), 0);
 
 /* ============ Estado ============ */
 const STORE = 'luz-y-relieve:v1';
-const DEF = { target: { lat: 37.0535, lon: -3.3114 }, observer: { lat: 37.0551, lon: -3.3664 }, radius: 1000, targetH: 0, base: 'topo', shadows: true, shade: 0.55, hill: true, lines: true, cloud: false, rain: false, radar: false, sat: false, eum: false, radarA: 0.9 };
+const DEF = { target: { lat: 37.0535, lon: -3.3114 }, observer: { lat: 37.0551, lon: -3.3664 }, radius: 1000, targetH: 0, base: 'topo', shadows: true, shade: 0.55, hill: true, lines: true, cloud: false, rain: false, radar: false, sat: false, eum: false, snow: false, radarA: 0.9 };
 function loadSaved() {
   try {
     const s = JSON.parse(localStorage.getItem(STORE) || '{}'), o = {};
@@ -1287,10 +1592,19 @@ const EN_STATIC = {
   'Radar de lluvia real (últimas 2 h)': 'Real rain radar (last 2 h)',
   'Foto de satélite real (NASA, día elegido)': 'Real satellite photo (NASA, chosen day)',
   'Satélite europeo Meteosat (cada 10 min)': 'European satellite Meteosat (every 10 min)',
-  'Idioma / Language': 'Language / Idioma'
+  'Idioma / Language': 'Language / Idioma',
+  'Localizaciones y enlace': 'Saved places and link', 'Ventanas de luz': 'Light windows', 'Mejor día': 'Best day', 'Luna y Vía Láctea': 'Moon and Milky Way',
+  'Alineaciones Sol y Luna con el motivo': 'Sun and Moon alignments with the subject', 'Niebla, nieve y aire': 'Fog, snow and air',
+  'Desde': 'From', 'Días': 'Days', 'Primer día': 'First day', 'Número de días': 'Number of days', 'Buscar el mejor día': 'Find the best day',
+  'Buscar alineaciones en el próximo año': 'Search alignments in the next year', 'Comparar modelos de previsión': 'Compare forecast models',
+  'Guardar': 'Save', 'Exportar': 'Export', 'Importar': 'Import', 'Copiar enlace': 'Copy link', 'Abrir': 'Open', 'Incluir fecha y hora': 'Include date and time',
+  'Nombre (p. ej. Mulhacén, amanecer)': 'Name (e.g. Mulhacén, sunrise)', 'Nombre de la localización': 'Name of the place',
+  'Pega un enlace o código': 'Paste a link or code', 'Enlace o código para abrir': 'Link or code to open', 'Enlace de esta planificación': 'Link to this plan',
+  'Estás usando el archivo en local: el enlace solo funcionará en este equipo. Publica la página (p. ej. en GitHub Pages) para compartir enlaces.': 'You are using the file locally: the link will only work on this computer. Publish the page (e.g. on GitHub Pages) to share links.',
+  'Cobertura de nieve (satélite NASA)': 'Snow cover (NASA satellite)'
 };
 const STATIC = [];
-const DYN_SKIP = 'script,style,svg,.l-es,.l-en,#pts,#sunkv,#chips,#light,#wx,#los,#daychart,#results,#results2,#status,#search-note,#cloud-note,#rain-note,#play,#eyeview,.mk';
+const DYN_SKIP = 'script,style,svg,.l-es,.l-en,#pts,#sunkv,#chips,#light,#wx,#los,#daychart,#results,#results2,#status,#search-note,#cloud-note,#rain-note,#play,#eyeview,.mk,#windows,#night,#align,#align-res,#env,#models,#best,#pl-list,#pl-note,#snow-note';
 function initStatic() {
   const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n;
   while ((n = w.nextNode())) {
@@ -1313,7 +1627,7 @@ function applyLang(initial) {
   document.querySelectorAll('.mk.t').forEach(m => { m.title = tr('Motivo', 'Subject'); const g = m.querySelector('.tag'); if (g) g.textContent = tr('Motivo', 'Subject'); });
   document.querySelectorAll('.mk.o').forEach(m => { m.title = tr('Posición', 'Position'); const g = m.querySelector('.tag'); if (g) g.textContent = tr('Posición', 'Position'); });
   if (initial) return;
-  renderChips(); renderPoints(); renderSun(); renderLight(); renderWeather(); renderLos(); drawDay(); wlNotes(); realNotes(); syncRot();
+  renderChips(); renderPoints(); renderSun(); renderLight(); renderWeather(); renderLos(); drawDay(); wlNotes(); realNotes(); syncRot(); renderFx();
   $('#results').hidden = true; $('#results2').hidden = true; $('#search-note').hidden = true; $('#map-note').hidden = true;
 }
 function setLang(l) { if (l !== 'es' && l !== 'en') return; LANG = l; S.lang = l; save(); applyLang(false); }
@@ -1527,7 +1841,7 @@ function initMap() {
     });
     map.on('zoomend', updateGeo);
     map.on('moveend', () => { if (!S.eye) { scheduleOverlay(); scheduleWL(); } });
-    map.on('error', e => { const id = e && e.sourceId; if (id === 'real-sat' || id === 'real-radar' || id === 'real-eum') { real[id.slice(5)].err = true; realNotes(); } });
+    map.on('error', e => { const id = e && e.sourceId; if (id === 'real-sat' || id === 'real-radar' || id === 'real-eum' || id === 'real-snow') { real[id.slice(5)].err = true; realNotes(); } });
     map.on('rotate', syncRot);
     map.on('pitch', () => { const sc = document.querySelector('.maplibregl-ctrl-scale'); if (sc) sc.style.display = map.getPitch() > 80 ? 'none' : ''; if (S.mode3d) { const v = Math.round(map.getPitch()); $('#pitch').value = v; $('#pitchout').textContent = v + '°'; } });
     mapReady = true;
@@ -1942,7 +2256,7 @@ function wlNotes() {
    Son imágenes servidas como teselas y se ven igual a cualquier escala. Se piden solo si se marca la casilla. */
 const RV_JSON = 'https://api.rainviewer.com/public/weather-maps.json';
 const real = { rv: null, rvAt: 0, timer: 0, radar: { st: 'idle', key: '', msg: '', ts: 0, fut: false, err: false }, sat: { st: 'idle', key: '', msg: '', sensor: '', today: false, err: false },
-  eum: { st: 'idle', key: '', msg: '', err: false, ts: 0, latest: false, night: false, caps: null, capsAt: 0 } };
+  eum: { st: 'idle', key: '', msg: '', err: false, ts: 0, latest: false, night: false, caps: null, capsAt: 0 }, snow: { st: 'idle', key: '', msg: '', err: false } };
 function scheduleReal(d) { clearTimeout(real.timer); real.timer = setTimeout(realRefresh, d == null ? 300 : d); }
 function realLayer(k, key, url, opts, opacity, before, extra) {
   const sid = 'real-' + k, lid = sid + '-layer';
@@ -1987,6 +2301,15 @@ function realSat() {
   T.sensor = S.min >= 750 ? 'Aqua' : 'Terra'; T.today = diff === 0;
   const url = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_${T.sensor}_CorrectedReflectance_TrueColor/default/${S.date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`;
   realLayer('sat', T.sensor + S.date, url, { maxzoom: 9, attribution: 'Imagery: NASA <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">GIBS</a> / MODIS ' + T.sensor }, 0.85, 'hillshade');
+  T.st = 'ready';
+}
+/* Cobertura de nieve observada: producto diario NDSI de MODIS Terra (NASA GIBS). Una celda sin color puede ser nube o falta de nieve. */
+function realSnow() {
+  const T = real.snow;
+  if (!S.snow) { realHide('snow'); T.st = 'idle'; return; }
+  if (C.daysBetween(C.todayIn(tz()), S.date) > 0) { T.st = 'future'; realHide('snow'); return; }
+  if (S.date < '2000-02-24') { T.st = 'old'; realHide('snow'); return; }
+  realLayer('snow', S.date, `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_NDSI_Snow_Cover/default/${S.date}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png`, { maxzoom: 8, attribution: 'Snow cover: NASA <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">GIBS</a> / MODIS Terra' }, 0.8, 'hillshade');
   T.st = 'ready';
 }
 /* Satélite europeo: EUMETSAT, servicio EUMETView (WMS). Imágenes de Meteosat Tercera Generación (MTG-I1, cada 10 min):
@@ -2052,7 +2375,7 @@ async function realEum() {
 }
 async function realRefresh() {
   if (!mapReady) return;
-  realSat(); await realRadar(); await realEum(); realNotes();
+  realSat(); realSnow(); await realRadar(); await realEum(); realNotes();
 }
 function realNotes() {
   const put = (el, on, html) => { el.hidden = !(on && html); el.innerHTML = html || ''; };
@@ -2080,6 +2403,12 @@ function realNotes() {
   else if (M.st === 'ready') h = tr(`Imagen Meteosat de las <b>${M.ts ? C.fmtTime(M.ts, tz()) : '—'}</b> (${M.ts ? esc(tzAbbr(M.ts, tz())) : ''}), la más cercana a la hora elegida${M.latest ? '; la hora elegida es posterior: es la última disponible' : ''}. ${M.night ? 'De noche: infrarrojo (más claro = nube más alta y fría).' : 'De día: color real.'} Cubre Europa, África y el Atlántico; fuera de ese disco no hay imagen.`, `Meteosat image from <b>${M.ts ? C.fmtTime(M.ts, tz()) : '—'}</b> (${M.ts ? esc(tzAbbr(M.ts, tz())) : ''}), the closest to the chosen time${M.latest ? '; the chosen time is later: this is the latest available' : ''}. ${M.night ? 'At night: infrared (brighter = higher, colder cloud).' : 'By day: true colour.'} It covers Europe, Africa and the Atlantic; there is no image outside that disc.`);
   if (h && M.st === 'ready' && M.err) h += ' <span class="bad">' + tr('Algunas teselas no se pudieron cargar.', 'Some tiles could not be loaded.') + '</span>';
   put($('#eum-note'), S.eum, h);
+  h = ''; const N = real.snow;
+  if (N.st === 'future') h = tr('No hay observaciones de días futuros. Para la nieve prevista mira «Niebla, nieve y aire».', 'There are no observations for future days. For forecast snow see “Fog, snow and air”.');
+  else if (N.st === 'old') h = tr('El producto de nieve MODIS empieza en febrero de 2000.', 'The MODIS snow product starts in February 2000.');
+  else if (N.st === 'ready') h = tr('Nieve observada ese día por MODIS Terra (índice NDSI, ~500 m): azul claro = nieve. Las nubes tapan el suelo, así que una zona sin color puede ser nube o falta de nieve. La del día de hoy puede estar incompleta.', 'Snow observed that day by MODIS Terra (NDSI index, ~500 m): light blue = snow. Clouds hide the ground, so an uncoloured area may be cloud or no snow. Today’s may be incomplete.');
+  if (h && N.st === 'ready' && N.err) h += ' <span class="bad">' + tr('Algunas teselas no se pudieron cargar.', 'Some tiles could not be loaded.') + '</span>';
+  put($('#snow-note'), S.snow, h);
 }
 
 /* ============ Análisis alrededor del motivo ============ */
@@ -2459,6 +2788,399 @@ function onTargetChange() {
 }
 function onObserverChange() { save(); renderPoints(); updateGeo(); scheduleLos(); renderLight(); }
 
+/* ============ Planificación avanzada ============
+   Ventanas de luz, mejor día, Luna y Vía Láctea, alineaciones, comparación de modelos, niebla/nieve/aire,
+   localizaciones guardadas y enlaces. Los cálculos astronómicos están en core.js (con tests); aquí solo se muestran. */
+const snapRadius = r => [250, 500, 1000, 2000, 5000].reduce((a, b) => Math.abs(b - r) < Math.abs(a - r) ? b : a);
+const fxT = ms => C.fmtTime(ms, tz());
+const localMs = (date, min) => { const p = C.parseDate(date); return C.zonedToUtc(p.y, p.mo, p.d, Math.floor(min / 60), Math.floor(min % 60), tz()); };
+const dateOf = ms => C.dateStr(C.localParts(ms, tz()));
+const dayStart = date => { const p = C.parseDate(date || S.date); return C.zonedToUtc(p.y, p.mo, p.d, 0, 0, tz()); };
+const camBrg = () => { const o = S.observer, t = S.target; return C.distanceTo(o.lat, o.lon, t.lat, t.lon) >= 30 ? C.bearingTo(o.lat, o.lon, t.lat, t.lon) : null; };
+const fxNote = h => `<p class="note" style="margin:0">${h}</p>`;
+const spinTxt = (a, b) => '<span class="spin"></span>' + tr(a, b);
+const dateLabel = d => { const p = C.parseDate(d); return new Date(Date.UTC(p.y, p.mo - 1, p.d)).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'es-ES', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }); };
+const bodyName = b => b === 'moon' ? tr('Luna', 'Moon') : tr('Sol', 'Sun');
+function interpHourly(h, min, base) {
+  base = base || 0; const x = clamp(min / 60, 0, 23.999), i = Math.floor(x), f = x - i, o = {};
+  for (const k of Object.keys(h)) {
+    if (k === 'time') continue;
+    const A = h[k]; if (!Array.isArray(A)) continue;
+    const a = A[base + i], b = A[Math.min(base + i + 1, A.length - 1)];
+    if (a == null) { o[k] = null; continue; }
+    o[k] = (k === 'weather_code' || k === 'wind_direction_10m') ? (f < 0.5 ? a : (b == null ? a : b)) : (b == null ? a : a + (b - a) * f);
+  }
+  return o;
+}
+let fxTimer = 0;
+function scheduleFx() { clearTimeout(fxTimer); fxTimer = setTimeout(renderFx, 120); }
+function renderFx() {
+  [renderWindows, renderNight, renderAlign, renderEnv, renderModels, renderBest, renderPlaces].forEach(f => { try { f(); } catch (e) { diagAdd(f.name, e); } });
+}
+function setDateMin(date, min) {
+  if (date && date !== S.date && C.parseDate(date)) { S.date = date; $('#date').value = date; onDateChange(); }
+  if (min != null) { S.min = clamp(Math.round(min), 0, 1439); syncTime(); }
+}
+const skyTxt = sc => sc == null ? '' : sc >= 70 ? `<span class="good">${tr('cielo favorable', 'favourable sky')}</span>` : sc >= 45 ? `<span class="warn">${tr('cielo aceptable', 'fair sky')}</span>` : `<span class="bad">${tr('cielo poco favorable', 'unfavourable sky')}</span>`;
+
+/* ---- 1. Ventanas de luz del día ---- */
+function renderWindows() {
+  const box = $('#windows'), brg = camBrg(), W = C.lightWindows(dayStart(), S.target.lat, S.target.lon, brg);
+  if (!W.length) { box.innerHTML = fxNote(tr('Este día no hay hora azul ni dorada en esta latitud (Sol de medianoche o noche polar).', 'There is no blue or golden hour on this day at this latitude (midnight Sun or polar night).')); return; }
+  const rel = { contra: tr('contraluz', 'backlight'), lateral: tr('luz lateral', 'side light'), frontal: tr('luz frontal', 'front light') };
+  const rows = W.map(w => {
+    const mid = (w.from + w.to) / 2, mm = minutesOf(mid), sc = C.photoScore(wxAt(mm)), li = day.lit[Math.min(143, Math.floor(mm / 10))];
+    const t = (w.kind === 'blue' ? tr('Hora azul', 'Blue hour') : tr('Hora dorada', 'Golden hour')) + ' · ' + (w.am ? tr('amanecer', 'sunrise') : tr('atardecer', 'sunset'));
+    const bits = [w.rel ? rel[w.rel] : null, w.kind === 'golden' && li >= 0 ? tr(`Sol en el ${Math.round(li * 100)} % del encuadre`, `Sun on ${Math.round(li * 100)} % of the frame`) : null, skyTxt(sc)].filter(Boolean);
+    return { w, sc, html: `<button type="button" class="fxrow" data-min="${Math.round(mm)}"><b>${t}</b><span class="mono">${fxT(w.from)}–${fxT(w.to)}</span><em>${bits.join(' · ') || '&nbsp;'}</em></button>` };
+  });
+  let best = null; rows.forEach(r => { if (r.sc != null && r.w.kind === 'golden') { const v = r.sc + (r.w.rel === 'lateral' ? 6 : 0); if (!best || v > best.v) best = { v, r }; } });
+  const lead = best && best.r.sc >= 45 ? `<p class="note" style="margin:0 0 6px">${tr('Mejor combinación del día', 'Best of the day')}: <b>${(best.r.w.am ? tr('hora dorada del amanecer', 'sunrise golden hour') : tr('hora dorada del atardecer', 'sunset golden hour'))}</b> (${fxT(best.r.w.from)}–${fxT(best.r.w.to)}).</p>` : '';
+  const foot = brg == null ? tr('Separa la posición del motivo para saber si es contraluz o luz lateral.', 'Move the position away from the subject to know whether it is backlight or side light.') : tr('Contraluz: la cámara mira hacia el Sol (±35°); frontal: el Sol queda a tu espalda (±35°).', 'Backlight: the camera faces the Sun (±35°); front light: the Sun is behind you (±35°).');
+  box.innerHTML = lead + rows.map(r => r.html).join('') + `<p class="note">${tr('Pulsa una franja para ir a esa hora. La valoración del cielo sale de la previsión de nubes, lluvia y visibilidad.', 'Tap a slot to go to that time. The sky rating comes from the cloud, rain and visibility forecast.')} ${foot}</p>`;
+}
+
+/* ---- 3. Luna y Vía Láctea ---- */
+const MOON_EMO = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+const MOON_ES = ['Luna nueva', 'Luna creciente', 'Cuarto creciente', 'Gibosa creciente', 'Luna llena', 'Gibosa menguante', 'Cuarto menguante', 'Luna menguante'];
+const MOON_EN = ['New moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full moon', 'Waning gibbous', 'Last quarter', 'Waning crescent'];
+function renderNight() {
+  const box = $('#night'), { lat, lon } = S.target, t0 = dayStart(), noon = localMs(S.date, 720);
+  const ill = C.moonIllumination(noon), pi = Math.floor(((ill.phase + 1 / 16) % 1) * 8), mt = C.moonTimes(t0, t0 + 86400000, lat, lon), now = C.moonPosition(utcAt(S.min), lat, lon);
+  const list = a => a.length ? a.map(fxT).join(', ') : '—';
+  let h = `<dl class="kv" style="margin-top:0"><dt>${tr('Fase', 'Phase')}</dt><dd>${MOON_EMO[pi]} ${(LANG === 'en' ? MOON_EN : MOON_ES)[pi]} · ${Math.round(ill.fraction * 100)} %</dd>
+    <dt>${tr('Sale / se pone', 'Rises / sets')}</dt><dd>${list(mt.rise)} / ${list(mt.set)}</dd>
+    <dt>${tr('A la hora elegida', 'At the chosen time')}</dt><dd>${now.alt > -0.8 ? tr(`altura ${nf(now.altApp, 0)}° · acimut ${nf(now.az, 0)}° ${cardinal(now.az)}`, `altitude ${nf(now.altApp, 0)}° · azimuth ${nf(now.az, 0)}° ${cardinal(now.az)}`) : tr('bajo el horizonte', 'below the horizon')}</dd></dl>`;
+  const nextNoon = noon + 86400000, W = C.milkyWayWindows(noon, nextNoon, lat, lon, 8);
+  h += `<div class="ins" style="grid-template-columns:96px 1fr"><b>${tr('Vía Láctea', 'Milky Way')}</b><span>`;
+  if (!W.length) {
+    let minSun = 90; for (let t = noon; t <= nextNoon; t += 1200000) minSun = Math.min(minSun, C.sunPosition(t, lat, lon).alt);
+    h += minSun > -18 ? tr('Esta noche no llega a ser del todo oscura (Sol por encima de −18°) a esta latitud y fecha.', 'The night does not get fully dark (Sun above −18°) at this latitude and date.')
+      : tr('El núcleo galáctico no sube de 8° mientras el cielo está oscuro: no es temporada (en latitudes medias, de febrero a octubre).', 'The galactic core does not rise above 8° while the sky is dark: out of season (at mid latitudes, February to October).');
+  } else {
+    for (const w of W) {
+      const freeMin = w.moonFree.reduce((a, f) => a + (f[1] - f[0]) / 60000 + 5, 0), mid = (w.from + w.to) / 2, mi = C.moonIllumination(mid).fraction, mm = C.moonPosition(mid, lat, lon);
+      h += tr(`Núcleo visible de <b>${fxT(w.from)}</b> a <b>${fxT(w.to + 300000)}</b>, altura máxima ${nf(w.maxAlt, 0)}° hacia el ${cardinal(w.maxAz)}.`, `Core visible from <b>${fxT(w.from)}</b> to <b>${fxT(w.to + 300000)}</b>, maximum altitude ${nf(w.maxAlt, 0)}° towards the ${cardinal(w.maxAz)}.`) + '<br>';
+      if (w.moonFree.length) h += tr('Sin Luna: ', 'Moon-free: ') + w.moonFree.map(f => `${fxT(f[0])}–${fxT(f[1] + 300000)}`).join(', ') + '. ';
+      h += freeMin >= 90 ? `<span class="good">${tr('Buena noche para la Vía Láctea.', 'Good night for the Milky Way.')}</span>`
+        : mi < 0.35 || mm.alt < 10 ? `<span class="warn">${tr(`Luna poco intrusiva (${Math.round(mi * 100)} %).`, `The Moon is not very intrusive (${Math.round(mi * 100)} %).`)}</span>`
+        : `<span class="bad">${tr(`Luna alta e iluminada (${Math.round(mi * 100)} %): velará la Vía Láctea.`, `High, bright Moon (${Math.round(mi * 100)} %): it will wash out the Milky Way.`)}</span>`;
+      h += '<br>';
+    }
+  }
+  h += `</span></div><p class="note">${tr('No incluye la contaminación lumínica del lugar ni la previsión de nubes de la noche.', 'It does not include local light pollution or the night’s cloud forecast.')}</p>`;
+  box.innerHTML = h;
+}
+
+/* ---- 4. Alineaciones del Sol y la Luna con el motivo ---- */
+const align = { key: '', list: null, busy: false, msg: '' };
+function alignTop() { return los.status === 'ready' && los.res ? los.res.angle : null; }
+function alignKey() { const o = S.observer, t = S.target; return [o.lat, o.lon, t.lat, t.lon].map(v => v.toFixed(4)).join(',') + '|' + S.targetH + '|' + (alignTop() == null ? 'x' : alignTop().toFixed(1)); }
+function renderAlign() {
+  const box = $('#align'), brg = camBrg(), top = alignTop(), go = $('#align-go');
+  if (brg == null) { box.innerHTML = fxNote(tr('Separa la posición del motivo (más de 30 m) para calcular alineaciones.', 'Move the position away from the subject (more than 30 m) to compute alignments.')); go.disabled = true; $('#align-res').innerHTML = ''; return; }
+  go.disabled = top == null || align.busy;
+  const o = S.observer, t0 = dayStart();
+  const ev = ['sun', 'moon'].flatMap(b => C.azCrossings(b, o.lat, o.lon, brg, t0, t0 + 86400000).filter(c => c.alt > -1).map(c => Object.assign({ b }, c)));
+  ev.sort((a, b) => a.ms - b.ms);
+  let h = `<p class="note" style="margin:0 0 6px">${tr(`Dirección del motivo desde la posición: <b>${nf(brg, 1)}° ${cardinal(brg)}</b>${top != null ? `; la parte alta del motivo se ve a <b>${nf(top, 1)}°</b> sobre el horizonte` : ''}.`, `Direction of the subject from the position: <b>${nf(brg, 1)}° ${cardinal(brg)}</b>${top != null ? `; the top of the subject is seen at <b>${nf(top, 1)}°</b> above the horizon` : ''}.`)}</p>`;
+  if (!ev.length) h += fxNote(tr('Este día ni el Sol ni la Luna pasan por esa dirección sobre el horizonte.', 'On this day neither the Sun nor the Moon pass through that direction above the horizon.'));
+  ev.forEach(e => {
+    const off = top == null ? null : e.alt - top, ok = off != null && Math.abs(off) <= 1.5;
+    const ill = e.b === 'moon' ? ` (${Math.round(C.moonIllumination(e.ms).fraction * 100)} %)` : '';
+    const rel = off == null ? tr(`a ${nf(e.alt, 1)}° de altura`, `at ${nf(e.alt, 1)}° altitude`) : ok ? `<span class="good">${tr(`alineado con la parte alta del motivo (${off >= 0 ? '+' : '−'}${nf(Math.abs(off), 1)}°)`, `aligned with the top of the subject (${off >= 0 ? '+' : '−'}${nf(Math.abs(off), 1)}°)`)}</span>` : off > 0 ? tr(`${nf(off, 1)}° por encima del motivo`, `${nf(off, 1)}° above the subject`) : tr(`${nf(-off, 1)}° por debajo de su parte alta (queda tapado)`, `${nf(-off, 1)}° below its top (hidden behind it)`);
+    h += `<button type="button" class="fxrow" data-min="${Math.round(minutesOf(e.ms))}"><b>${bodyName(e.b)}${ill}</b><span class="mono">${fxT(e.ms)}</span><em>${rel}</em></button>`;
+  });
+  box.innerHTML = h;
+  const res = $('#align-res');
+  if (align.busy) res.innerHTML = fxNote(spinTxt('Buscando en 366 días…', 'Searching 366 days…') + ' ' + align.msg);
+  else if (align.list && align.key === alignKey()) {
+    if (!align.list.length) res.innerHTML = fxNote(tr('No hay alineaciones con la parte alta del motivo en los próximos 12 meses (tolerancia ±1,5°).', 'No alignments with the top of the subject in the next 12 months (tolerance ±1.5°).'));
+    else res.innerHTML = `<p class="note" style="margin:8px 0 4px">${tr('Próximas alineaciones (±1,5° de altura):', 'Upcoming alignments (±1.5° in altitude):')}</p>` + align.list.map(x => `<button type="button" class="fxrow" data-date="${x.date}" data-min="${x.min}"><b>${dateLabel(x.date)}${x.n > 1 ? ' <small>(' + tr('± ' + Math.floor(x.n / 2) + ' d', '± ' + Math.floor(x.n / 2) + ' d') + ')</small>' : ''}</b><span class="mono">${fxT(x.ms)}</span><em>${bodyName(x.b)}${x.b === 'moon' ? ' (' + Math.round(x.illum * 100) + ' %)' : ''} · ${x.off >= 0 ? '+' : '−'}${nf(Math.abs(x.off), 1)}°</em></button>`).join('');
+  } else res.innerHTML = '';
+}
+async function searchAlign() {
+  const top = alignTop(), brg = camBrg(); if (top == null || brg == null || align.busy) return;
+  align.busy = true; align.msg = ''; renderAlign();
+  const key = alignKey(), total = 366, raw = [], base = { lat: S.observer.lat, lon: S.observer.lon, brg, topAngle: top, tolAlt: 1.5, bodies: ['sun', 'moon'] }, s0 = dayStart();
+  for (let d = 0; d < total; d += 30) {
+    const r = C.findAlignments(Object.assign({}, base, { startMs: s0 + d * 86400000, days: Math.min(30, total - d) }));
+    r.forEach(x => { x.day += d; raw.push(x); });
+    align.msg = Math.round((d + 30) / total * 100) + ' %'; renderAlign(); await tick();
+  }
+  /* una alineación dura varios días seguidos: se agrupa y se muestra el mejor día de cada grupo */
+  const list = [];
+  for (const b of ['sun', 'moon']) {
+    const a = raw.filter(x => x.body === b && (b === 'sun' || x.illum >= 0.03)).sort((p, q) => p.day - q.day); let g = [];
+    const flush = () => { if (!g.length) return; const best = g.reduce((p, q) => Math.abs(q.off) < Math.abs(p.off) ? q : p); list.push({ b, ms: best.ms, off: best.off, illum: best.illum, n: g.length, day: best.day, date: dateOf(best.ms), min: Math.round(minutesOf(best.ms)) }); g = []; };
+    a.forEach(x => { if (g.length && x.day - g[g.length - 1].day > 2) flush(); g.push(x); }); flush();
+  }
+  list.sort((p, q) => p.ms - q.ms);
+  align.list = list.slice(0, 16); align.key = key; align.busy = false; renderAlign();
+}
+
+/* ---- 2. Mejor día en un rango ---- */
+const best = { st: 'idle', rows: [], msg: '', key: '' };
+async function fetchBest() {
+  const today = C.todayIn(tz()), maxEnd = C.addDays(today, 15); let start = $('#best-from').value || S.date; if (!C.parseDate(start)) start = today; if (start < today) start = today;
+  const n = clamp(+$('#best-n').value || 7, 1, 16); let end = C.addDays(start, n - 1); if (end > maxEnd) end = maxEnd;
+  if (start > maxEnd) { best.st = 'far'; renderBest(); return; }
+  const { lat, lon } = S.target; best.st = 'loading'; best.key = `${lat.toFixed(2)},${lon.toFixed(2)},${start},${end}`; renderBest();
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&hourly=${HOURLY.join(',')}&timezone=auto&start_date=${start}&end_date=${end}&wind_speed_unit=kmh`;
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 20000), res = await fetch(url, { signal: ctl.signal }); clearTimeout(to);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json(); if (!j.hourly || !j.hourly.time || j.hourly.time.length < 24) throw new Error(tr('sin datos', 'no data'));
+    const rows = [], days = Math.floor(j.hourly.time.length / 24);
+    for (let i = 0; i < days; i++) {
+      const date = C.addDays(start, i), p = C.parseDate(date), noon = C.zonedToUtc(p.y, p.mo, p.d, 12, 0, tz()), st = C.sunTimes(noon, lat, lon);
+      const at = m => interpHourly(j.hourly, m, i * 24), sc = m => { const v = [-30, 0, 30].map(d => C.photoScore(at(clamp(m + d, 0, 1439)))).filter(x => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
+      const mr = minutesOf(st.sunrise), ms = minutesOf(st.sunset), a = at(mr), b = at(ms);
+      rows.push({ date, mr, ms, sr: isFinite(mr) ? sc(mr) : null, ss: isFinite(ms) ? sc(ms) : null, cr: a.cloud_cover, cs: b.cloud_cover, pr: Math.max(a.precipitation || 0, b.precipitation || 0) });
+    }
+    best.rows = rows; best.st = 'ready';
+  } catch (e) { best.st = 'error'; best.msg = String(e && e.message || e); }
+  renderBest();
+}
+function renderBest() {
+  const box = $('#best');
+  if (best.st === 'idle') { box.innerHTML = ''; return; }
+  if (best.st === 'loading') { box.innerHTML = fxNote(spinTxt('Consultando Open-Meteo…', 'Querying Open-Meteo…')); return; }
+  if (best.st === 'far') { box.innerHTML = fxNote(tr('La previsión llega hasta 15 días vista: elige una fecha de inicio más cercana.', 'The forecast reaches 15 days ahead: choose an earlier start date.')); return; }
+  if (best.st === 'error') { box.innerHTML = fxNote(`<span class="bad">${tr('No se pudo obtener la previsión', 'Could not get the forecast')}</span> (${esc(best.msg)}).`); return; }
+  const v = r => Math.max(r.sr == null ? -1 : r.sr, r.ss == null ? -1 : r.ss), top = best.rows.map(v).sort((a, b) => b - a)[Math.min(2, best.rows.length - 1)];
+  const bar = s => s == null ? '' : `<span class="bst"><i class="${s >= 70 ? 'g' : s >= 45 ? 'w' : 'b'}" style="width:${s}%"></i></span><span class="mono">${s}</span>`;
+  box.innerHTML = `<div class="besthd"><span></span><span class="bestbars"><span style="grid-column:1/4">${tr('Amanecer', 'Sunrise')}</span><span style="grid-column:4/7">${tr('Atardecer', 'Sunset')}</span></span></div>` + best.rows.map(r => {
+    const star = v(r) >= top && v(r) >= 45 ? '★ ' : '', pick = (r.ss != null && (r.sr == null || r.ss > r.sr)) ? r.ms : r.mr;
+    return `<button type="button" class="fxrow bestrow" data-date="${r.date}" data-min="${Math.round(pick)}"><b>${star}${dateLabel(r.date)}</b><span class="bestbars">${bar(r.sr)}<small>${fxT(localMs(r.date, r.mr))}</small>${bar(r.ss)}<small>${fxT(localMs(r.date, r.ms))}</small></span><em>${r.cr != null ? tr('nubes ', 'clouds ') + Math.round(r.cr) + ' % / ' + Math.round(r.cs) + ' %' : ''}${r.pr >= 0.2 ? ' · <span class="bad">' + tr('lluvia', 'rain') + '</span>' : ''}</em></button>`;
+  }).join('') + `<p class="note">${tr('Puntuación 0–100 del cielo en la salida y la puesta del Sol: las nubes bajas la bajan; las medias y altas parciales dan color. ★ = los mejores días. Pulsa un día para verlo.', 'Sky rating 0–100 at sunrise and sunset: low clouds lower it; partial mid and high clouds add colour. ★ = best days. Tap a day to view it.')}</p>`;
+}
+
+/* ---- 11. Comparar modelos de previsión ---- */
+const MODELS = [['ecmwf_ifs025', 'ECMWF IFS'], ['gfs_seamless', 'GFS (NOAA)'], ['icon_seamless', 'ICON (DWD)'], ['meteofrance_seamless', 'Météo-France']];
+const mdl = { st: 'idle', key: '', rows: [], msg: '' };
+const mdlKey = () => `${S.target.lat.toFixed(2)},${S.target.lon.toFixed(2)},${S.date}`;
+async function fetchModels() {
+  const diff = C.daysBetween(C.todayIn(tz()), S.date);
+  if (diff > 15 || diff < -90) { mdl.st = diff > 15 ? 'far' : 'old'; mdl.key = mdlKey(); renderModels(); return; }
+  mdl.st = 'loading'; mdl.key = mdlKey(); renderModels();
+  try {
+    const { lat, lon } = S.target, vars = ['cloud_cover', 'cloud_cover_low', 'precipitation', 'temperature_2m'];
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&hourly=${vars.join(',')}&models=${MODELS.map(m => m[0]).join(',')}&timezone=auto&start_date=${S.date}&end_date=${S.date}`;
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 20000), res = await fetch(url, { signal: ctl.signal }); clearTimeout(to);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json(); if (!j.hourly) throw new Error(tr('sin datos', 'no data'));
+    const rows = [];
+    for (const [id, name] of MODELS) {
+      const h = {}; vars.forEach(v => { h[v] = j.hourly[`${v}_${id}`]; });
+      if (h.cloud_cover && h.cloud_cover.some(x => x != null)) rows.push({ id, name, h });
+    }
+    if (!rows.length && j.hourly.cloud_cover) rows.push({ id: 'best', name: tr('Previsión', 'Forecast'), h: j.hourly });
+    if (!rows.length) throw new Error(tr('ningún modelo devolvió datos para este punto', 'no model returned data for this point'));
+    mdl.rows = rows; mdl.st = 'ready';
+  } catch (e) { mdl.st = 'error'; mdl.msg = String(e && e.message || e); }
+  renderModels();
+}
+function renderModels() {
+  const box = $('#models');
+  if (mdl.st === 'idle') { box.innerHTML = ''; return; }
+  if (mdl.st === 'loading') { box.innerHTML = fxNote(spinTxt('Consultando cuatro modelos…', 'Querying four models…')); return; }
+  if (mdl.st === 'far') { box.innerHTML = fxNote(tr('La previsión llega hasta 15 días vista.', 'The forecast reaches 15 days ahead.')); return; }
+  if (mdl.st === 'old') { box.innerHTML = fxNote(tr('La comparación de modelos solo existe para previsiones (no para el histórico).', 'Model comparison only exists for forecasts (not for history).')); return; }
+  if (mdl.st === 'error') { box.innerHTML = fxNote(`<span class="bad">${tr('No se pudo comparar', 'Could not compare')}</span> (${esc(mdl.msg)}).`); return; }
+  if (mdl.key !== mdlKey()) { box.innerHTML = fxNote(tr('Estos datos son de otro punto o fecha: vuelve a pulsar el botón.', 'These data are for another point or date: press the button again.')); return; }
+  const dl0 = Math.floor(minutesOf(day.times.sunrise) / 60), dl1 = Math.ceil(minutesOf(day.times.sunset) / 60);
+  const data = mdl.rows.map(r => {
+    const a = interpHourly(r.h, S.min), dm = []; for (let i = dl0; i <= dl1 && i < 24; i++) if (r.h.cloud_cover[i] != null) dm.push(r.h.cloud_cover[i]);
+    const pr = r.h.precipitation.reduce((s, v) => s + (v || 0), 0);
+    return { name: r.name, c: a.cloud_cover, lo: a.cloud_cover_low, t: a.temperature_2m, dm: dm.length ? dm.reduce((s, v) => s + v, 0) / dm.length : null, pr };
+  });
+  const cs = data.map(d => d.c).filter(v => v != null), spread = cs.length ? Math.max(...cs) - Math.min(...cs) : 0;
+  const verdict = data.length < 2 ? tr('Solo respondió un modelo: no se puede medir la dispersión.', 'Only one model answered: spread cannot be measured.')
+    : spread <= 15 ? `<span class="good">${tr('Los modelos coinciden', 'The models agree')}</span> (${tr('dispersión', 'spread')} ${nf(spread, 0)} ${tr('puntos de nubosidad', 'cloud-cover points')}): ${tr('previsión fiable.', 'a reliable forecast.')}`
+    : spread <= 35 ? `<span class="warn">${tr('Discrepan algo', 'They disagree somewhat')}</span> (${nf(spread, 0)} ${tr('puntos', 'points')}): ${tr('tómalo con margen.', 'allow some margin.')}`
+    : `<span class="bad">${tr('Discrepan mucho', 'They disagree strongly')}</span> (${nf(spread, 0)} ${tr('puntos', 'points')}): ${tr('baja confianza; mira otra vez más cerca de la fecha.', 'low confidence; check again closer to the date.')}`;
+  const f = v => v == null ? '—' : nf(v, 0);
+  box.innerHTML = `<div class="mtab"><b></b><b>${tr('Nubes', 'Cloud')}</b><b>${tr('Bajas', 'Low')}</b><b>${tr('Día', 'Day')}</b><b>mm</b>${data.map(d => `<span>${esc(d.name)}</span><span class="mono">${f(d.c)} %</span><span class="mono">${f(d.lo)} %</span><span class="mono">${f(d.dm)} %</span><span class="mono">${nf(d.pr, 1)}</span>`).join('')}</div>
+    <p class="note" style="margin:8px 0 0">${verdict}</p><p class="note">${tr('«Nubes» y «Bajas» a la hora elegida; «Día» = nubosidad media entre el amanecer y el atardecer; «mm» = precipitación del día.', '“Cloud” and “Low” at the chosen time; “Day” = mean cloud cover between sunrise and sunset; “mm” = the day’s precipitation.')}</p>`;
+}
+
+/* ---- 12 y 13. Niebla y mar de nubes, nieve y calidad del aire ---- */
+const env = { prof: { st: 'idle', key: '', h: null, msg: '' }, snow: { st: 'idle', key: '', h: null, msg: '' }, air: { st: 'idle', key: '', h: null, msg: '' } };
+const PL = [1000, 975, 950, 925, 900, 850, 800, 700];
+const envKey = () => `${S.target.lat.toFixed(2)},${S.target.lon.toFixed(2)},${S.date}`;
+let envTimer = 0;
+function subjectZ() {
+  if (los.res && los.status === 'ready') return los.res.groundT + S.targetH;
+  if (ana.grid && C.gridContains(ana.grid, S.target.lon, S.target.lat)) return C.gridElev(ana.grid, S.target.lon, S.target.lat) + S.targetH;
+  return wx.status === 'ready' && isFinite(wx.elev) ? wx.elev : null;
+}
+function ensureEnv() {
+  if (!$('#s-env').open) return;
+  const k = envKey(); if (['prof', 'snow', 'air'].every(x => env[x].key === k)) return;
+  clearTimeout(envTimer); envTimer = setTimeout(runEnv, 700);
+}
+async function envFetch(kind, url, key) {
+  const E = env[kind]; E.key = key; E.st = 'loading'; E.h = null; E.msg = '';
+  try {
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 20000), res = await fetch(url, { signal: ctl.signal }); clearTimeout(to);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json(); if (key !== envKey()) return;
+    if (!j.hourly || !j.hourly.time || !j.hourly.time.length) throw new Error(tr('sin datos', 'no data'));
+    E.h = j.hourly; E.elev = j.elevation; E.st = 'ready';
+  } catch (e) { if (key !== envKey()) return; E.st = 'error'; E.msg = String(e && e.message || e); }
+  renderEnv();
+}
+async function runEnv() {
+  const k = envKey(), La = S.target.lat.toFixed(4), Lo = S.target.lon.toFixed(4), date = S.date, diff = C.daysBetween(C.todayIn(tz()), date);
+  if (diff > 15 || diff < -90) { ['prof', 'snow', 'air'].forEach(x => { env[x].st = diff > 15 ? 'far' : 'old'; env[x].key = k; env[x].h = null; }); renderEnv(); return; }
+  ['prof', 'snow', 'air'].forEach(x => { env[x].st = 'loading'; env[x].key = k; }); renderEnv();
+  const pv = PL.flatMap(p => ['temperature', 'relative_humidity', 'cloud_cover', 'geopotential_height'].map(v => `${v}_${p}hPa`)).join(',');
+  const q = `latitude=${La}&longitude=${Lo}&timezone=auto&start_date=${date}&end_date=${date}`;
+  /* tres peticiones independientes: si una falla, las otras se muestran igualmente */
+  await Promise.all([
+    envFetch('prof', `https://api.open-meteo.com/v1/forecast?${q}&hourly=${pv}`, k),
+    envFetch('snow', `https://api.open-meteo.com/v1/forecast?${q}&hourly=snow_depth,snowfall,freezing_level_height`, k),
+    envFetch('air', `https://air-quality-api.open-meteo.com/v1/air-quality?${q}&hourly=pm10,pm2_5,dust,aerosol_optical_depth,european_aqi`, k)]);
+}
+function profLevels(h, min, zGround) {
+  const g = interpHourly(h, min), out = [];
+  const w = wx.status === 'ready' ? interpHourly(wx.h, min) : null;
+  if (w && w.temperature_2m != null) out.push({ z: zGround, t: w.temperature_2m, rh: w.relative_humidity_2m, cc: w.cloud_cover_low });
+  for (const p of PL) { const z = g[`geopotential_height_${p}hPa`], t = g[`temperature_${p}hPa`]; if (z == null || t == null || z < zGround + 15) continue; out.push({ z, t, rh: g[`relative_humidity_${p}hPa`], cc: g[`cloud_cover_${p}hPa`] }); }
+  return out;
+}
+const rangesTxt = hrs => { if (!hrs.length) return ''; const r = []; let a = hrs[0], b = hrs[0]; for (let i = 1; i < hrs.length; i++) { if (hrs[i] === b + 1) b = hrs[i]; else { r.push([a, b]); a = b = hrs[i]; } } r.push([a, b]); return r.map(([x, y]) => `${String(x).padStart(2, '0')}:00–${String(y + 1).padStart(2, '0')}:00`).join(', '); };
+function renderEnv() {
+  const box = $('#env'); ensureEnv();
+  const st = k => env[k].key !== envKey() ? 'idle' : env[k].st, zT = subjectZ();
+  const head = t => `<div class="ins"><b>${t}</b><span>`;
+  let h = '';
+  /* niebla y mar de nubes */
+  h += head(tr('Niebla y mar de nubes', 'Fog and cloud sea'));
+  const sp = st('prof');
+  if (sp === 'idle' || sp === 'loading') h += spinTxt('Consultando el perfil vertical…', 'Querying the vertical profile…');
+  else if (sp === 'far') h += tr('La previsión llega hasta 15 días vista.', 'The forecast reaches 15 days ahead.');
+  else if (sp === 'old') h += tr('El perfil vertical solo existe para previsiones recientes.', 'The vertical profile only exists for recent forecasts.');
+  else if (sp === 'error') h += `<span class="bad">${tr('No disponible', 'Not available')}</span> (${esc(env.prof.msg)}).`;
+  else {
+    const zg = wx.status === 'ready' && isFinite(wx.elev) ? wx.elev : (env.prof.elev || 0), zt = zT == null ? zg : zT;
+    const now = C.inversionProfile(profLevels(env.prof.h, S.min, zg), zt), sea = [], fog = [];
+    for (let hr = 0; hr < 24; hr++) { const v = C.inversionProfile(profLevels(env.prof.h, hr * 60 + 30, zg), zt).verdict; if (v === 'sea') sea.push(hr); else if (v === 'inside') fog.push(hr); }
+    const m = x => nf(Math.round(x / 10) * 10, 0);
+    const L = now.layer;
+    h += now.verdict === 'sea' ? `<span class="good">${tr(`Posible mar de nubes`, 'Possible cloud sea')}</span>: ${tr(`el techo de la capa está hacia ${m(L.zTop)} m, bajo el motivo (${m(zt)} m), con cielo despejado encima.`, `the layer top is around ${m(L.zTop)} m, below the subject (${m(zt)} m), with clear sky above.`)}`
+      : now.verdict === 'inside' ? `<span class="warn">${tr('Niebla o nube en el motivo', 'Fog or cloud at the subject')}</span>: ${tr(`el motivo (${m(zt)} m) queda dentro de una capa húmeda (${m(L.zBase)}–${m(L.zTop)} m).`, `the subject (${m(zt)} m) is inside a moist layer (${m(L.zBase)}–${m(L.zTop)} m).`)}`
+      : now.verdict === 'above' ? tr(`Capa de nube hacia ${m(L.zBase)}–${m(L.zTop)} m, por encima del motivo.`, `Cloud layer around ${m(L.zBase)}–${m(L.zTop)} m, above the subject.`)
+      : tr('Sin capa de nube ni niebla marcada en el perfil.', 'No marked cloud or fog layer in the profile.');
+    if (now.strongest) h += `<br>${tr('Inversión térmica', 'Temperature inversion')}: +${nf(now.strongest.dT, 1)} °C ${tr('entre', 'between')} ${m(now.strongest.zBase)} ${tr('y', 'and')} ${m(now.strongest.zTop)} m.`;
+    if (sea.length) h += `<br>${tr('Mar de nubes previsto', 'Cloud sea expected')}: <b>${rangesTxt(sea)}</b>.`;
+    if (fog.length) h += `<br>${tr('Motivo en la nube/niebla', 'Subject in cloud/fog')}: ${rangesTxt(fog)}.`;
+    h += `<br><em>${tr('Estimación con el perfil vertical del modelo (celdas de varios km): orientativa, sobre todo en valles estrechos.', 'Estimate from the model’s vertical profile (cells several km wide): indicative, especially in narrow valleys.')}</em>`;
+  }
+  h += '</span></div>';
+  /* nieve */
+  h += head(tr('Nieve', 'Snow'));
+  const ss = st('snow');
+  if (ss === 'idle' || ss === 'loading') h += spinTxt('Consultando…', 'Querying…');
+  else if (ss === 'far' || ss === 'old') h += tr('Sin datos para esta fecha.', 'No data for this date.');
+  else if (ss === 'error') h += `<span class="bad">${tr('No disponible', 'Not available')}</span> (${esc(env.snow.msg)}).`;
+  else {
+    const a = interpHourly(env.snow.h, S.min), fl = a.freezing_level_height, depth = a.snow_depth, sum = (env.snow.h.snowfall || []).reduce((s, v) => s + (v || 0), 0);
+    h += depth != null ? (depth >= 0.02 ? tr(`Nieve en el suelo (modelo): <b>${nf(depth * 100, 0)} cm</b>.`, `Snow on the ground (model): <b>${nf(depth * 100, 0)} cm</b>.`) : tr('Sin nieve en el suelo según el modelo.', 'No snow on the ground according to the model.')) : '';
+    if (sum >= 0.1) h += `<br>${tr(`Nevada prevista ese día: ${nf(sum, 1)} cm.`, `Snowfall forecast that day: ${nf(sum, 1)} cm.`)}`;
+    if (fl != null) h += `<br>${tr(`Isoterma de 0 °C hacia ${nf(Math.round(fl / 10) * 10, 0)} m`, `Freezing level around ${nf(Math.round(fl / 10) * 10, 0)} m`)}${zT != null ? (fl < zT - 100 ? tr(': el motivo queda por encima (nieve o hielo probables).', ': the subject is above it (snow or ice likely).') : fl > zT + 100 ? tr(': el motivo queda por debajo (sin nieve nueva a su altura).', ': the subject is below it (no new snow at its height).') : tr(': muy cerca de la altura del motivo.', ': very close to the subject’s height.')) : '.'}`;
+    h += `<br><em>${tr('Para ver la nieve real observada, marca «Cobertura de nieve» en las capas.', 'To see the observed snow, tick “Snow cover” in the layers.')}</em>`;
+  }
+  h += '</span></div>';
+  /* aire */
+  h += head(tr('Calidad del aire', 'Air quality'));
+  const sa = st('air');
+  if (sa === 'idle' || sa === 'loading') h += spinTxt('Consultando Open-Meteo (CAMS)…', 'Querying Open-Meteo (CAMS)…');
+  else if (sa === 'far' || sa === 'old') h += tr('Sin datos para esta fecha.', 'No data for this date.');
+  else if (sa === 'error') h += `<span class="bad">${tr('No disponible', 'Not available')}</span> (${esc(env.air.msg)}). ${tr('La calidad del aire se pronostica solo unos días.', 'Air quality is only forecast a few days ahead.')}`;
+  else {
+    const a = interpHourly(env.air.h, S.min), aod = a.aerosol_optical_depth, dust = a.dust, pm = a.pm10, f = (v, d) => v == null ? '—' : nf(v, d);
+    const verd = aod == null ? '' : aod >= 0.5 ? `<span class="bad">${tr('Aire muy turbio', 'Very hazy air')}</span>` : aod >= 0.25 ? `<span class="warn">${tr('Aire algo turbio', 'Somewhat hazy air')}</span>` : `<span class="good">${tr('Aire limpio', 'Clean air')}</span>`;
+    h += `${verd} · AOD ${f(aod, 2)} · PM10 ${f(pm, 0)} µg/m³${dust != null ? ' · ' + tr('polvo', 'dust') + ' ' + f(dust, 0) + ' µg/m³' : ''}${a.european_aqi != null ? ' · AQI ' + f(a.european_aqi, 0) : ''}.`;
+    if (dust != null && dust >= 50) h += `<br>${tr('Polvo en suspensión (calima): atardeceres rojizos, pero poco contraste y lejanías borrosas.', 'Suspended dust (calima): reddish sunsets, but low contrast and hazy distances.')}`;
+    else if (aod != null && aod < 0.25) h += `<br>${tr('Buena transparencia: lejanías nítidas.', 'Good transparency: crisp distances.')}`;
+  }
+  h += '</span></div><p class="src">Open-Meteo · CAMS</p>';
+  box.innerHTML = h;
+}
+
+/* ---- 5. Localizaciones guardadas ---- */
+const PLK = 'luz-y-relieve:places:v1';
+let places = [];
+function loadPlaces() { try { places = C.sanitizePlaces(JSON.parse(localStorage.getItem(PLK) || '[]')); } catch (e) { places = []; } }
+function savePlaces() { try { localStorage.setItem(PLK, JSON.stringify(places)); return true; } catch (e) { plNote(tr('No se pudo guardar en este navegador (almacenamiento bloqueado). Usa «Exportar» para conservar la lista.', 'Could not save in this browser (storage blocked). Use “Export” to keep the list.')); return false; } }
+let plNoteTimer = 0;
+function plNote(h) { const n = $('#pl-note'); n.innerHTML = h; n.hidden = !h; clearTimeout(plNoteTimer); if (h) plNoteTimer = setTimeout(() => { n.hidden = true; }, 9000); }
+function shareUrl() { return location.href.split('#')[0] + '#' + C.encodeShare({ target: S.target, observer: S.observer, date: S.date, min: S.min, radius: S.radius, targetH: S.targetH }); }
+function renderPlaces() {
+  const ul = $('#pl-list');
+  ul.innerHTML = places.length ? places.map((p, i) => `<li><span><b>${esc(p.name)}</b><br><small>${fmtCoord(p.target.lat, p.target.lon)}${p.date ? ' · ' + esc(p.date) + (p.min != null ? ' ' + hhmm(p.min) : '') : ''}</small></span><button type="button" class="btn" data-pl-open="${i}">${tr('Abrir', 'Open')}</button><button type="button" class="btn" data-pl-del="${i}" aria-label="${tr('Borrar', 'Delete')} ${esc(p.name)}" title="${tr('Borrar', 'Delete')}">✕</button></li>`).join('') : `<li class="none">${tr('Aún no hay localizaciones guardadas.', 'No saved places yet.')}</li>`;
+  const o = $('#lk-out'); if (o && document.activeElement !== o) o.value = shareUrl();
+  $('#lk-note').hidden = location.protocol !== 'file:'; 
+}
+function applyState(o) {
+  if (o.target) S.target = { lat: o.target.lat, lon: o.target.lon };
+  if (o.observer) S.observer = { lat: o.observer.lat, lon: o.observer.lon };
+  if (o.radius != null) { S.radius = snapRadius(o.radius); $('#radius').value = String(S.radius); }
+  if (o.targetH != null) { S.targetH = clamp(o.targetH, 0, 4000); $('#tgtH').value = S.targetH; }
+  if (o.date) { S.date = o.date; $('#date').value = o.date; }
+  if (o.min != null) { S.min = o.min; $('#tslider').value = S.min; }
+  save();
+  if (mapReady) { mkT.setLngLat([S.target.lon, S.target.lat]); mkO.setLngLat([S.observer.lon, S.observer.lat]); fitBoth(true); }
+  renderChips(); onTargetChange(); onObserverChange(); onDateChange();
+  if (o.min != null) syncTime();
+}
+function exportPlaces() {
+  const blob = new Blob([JSON.stringify({ app: 'PhotoLight Planner', version: 1, places }, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'photolight-localizaciones.json'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function importPlaces(txt) {
+  let j; try { j = JSON.parse(txt); } catch (e) { plNote(`<span class="bad">${tr('El archivo no es un JSON válido.', 'The file is not valid JSON.')}</span>`); return; }
+  const add = C.sanitizePlaces(Array.isArray(j) ? j : j && j.places); let n = 0;
+  for (const p of add) { if (!places.some(q => q.name === p.name && q.target.lat === p.target.lat && q.target.lon === p.target.lon)) { places.push(p); n++; } }
+  places = places.slice(0, 500); savePlaces(); renderPlaces();
+  plNote(add.length ? tr(`Importadas ${n} localizaciones nuevas (${add.length - n} ya estaban).`, `Imported ${n} new places (${add.length - n} were already there).`) : `<span class="bad">${tr('No se encontró ninguna localización válida en el archivo.', 'No valid place found in the file.')}</span>`);
+}
+async function copyLink() {
+  const url = shareUrl(); $('#lk-out').value = url;
+  try { await navigator.clipboard.writeText(url); plNote(tr('Enlace copiado.', 'Link copied.')); }
+  catch (e) { const o = $('#lk-out'); o.focus(); o.select(); try { document.execCommand('copy'); plNote(tr('Enlace copiado.', 'Link copied.')); } catch (e2) { plNote(tr('Selecciona el enlace y cópialo a mano.', 'Select the link and copy it by hand.')); } }
+}
+function bindFx() {
+  document.addEventListener('click', e => {
+    const r = e.target.closest('.fxrow'); if (r) { setDateMin(r.dataset.date || null, r.dataset.min != null ? +r.dataset.min : null); return; }
+    const o = e.target.closest('[data-pl-open]'); if (o) { const p = places[+o.dataset.plOpen]; if (p) { applyState(p); plNote(tr(`«${esc(p.name)}» abierta.`, `“${esc(p.name)}” opened.`)); } return; }
+    const d = e.target.closest('[data-pl-del]'); if (d) { places.splice(+d.dataset.plDel, 1); savePlaces(); renderPlaces(); }
+  });
+  $('#best-from').value = S.date; $('#best-go').onclick = fetchBest;
+  $('#models-go').onclick = fetchModels;
+  $('#align-go').onclick = searchAlign;
+  $('#s-env').addEventListener('toggle', ensureEnv);
+  $('#pl-save').onclick = () => {
+    const name = ($('#pl-name').value || '').replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80) || fmtCoord(S.target.lat, S.target.lon), inc = $('#pl-date').checked;
+    const p = { name, target: { lat: S.target.lat, lon: S.target.lon }, observer: { lat: S.observer.lat, lon: S.observer.lon }, radius: S.radius, targetH: S.targetH };
+    if (inc) { p.date = S.date; p.min = S.min; }
+    const i = places.findIndex(q => q.name === name); if (i >= 0) places[i] = p; else places.unshift(p);
+    places = places.slice(0, 500); if (savePlaces()) plNote(tr(`«${esc(name)}» guardada.`, `“${esc(name)}” saved.`)); $('#pl-name').value = ''; renderPlaces();
+  };
+  $('#pl-name').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#pl-save').click(); } });
+  $('#pl-export').onclick = () => { if (!places.length) { plNote(tr('No hay nada que exportar.', 'Nothing to export.')); return; } exportPlaces(); };
+  $('#pl-import').onclick = () => $('#pl-file').click();
+  $('#pl-file').onchange = e => { const f = e.target.files && e.target.files[0]; if (!f) return; if (f.size > 2e6) { plNote(`<span class="bad">${tr('Archivo demasiado grande.', 'File too large.')}</span>`); return; } const r = new FileReader(); r.onload = () => importPlaces(String(r.result)); r.readAsText(f); e.target.value = ''; };
+  $('#lk-copy').onclick = copyLink;
+  $('#lk-open').onclick = () => { const s = C.decodeShare($('#lk-in').value.trim()); if (!s) { plNote(`<span class="bad">${tr('Enlace o código no válido.', 'Invalid link or code.')}</span>`); return; } applyState(s); $('#lk-in').value = ''; plNote(tr('Planificación abierta.', 'Plan opened.')); };
+  $('#lk-in').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#lk-open').click(); } });
+  $('#o-snow').checked = !!S.snow; $('#o-snow').onchange = e => { S.snow = e.target.checked; real.snow.st = 'idle'; scheduleReal(0); };
+  window.addEventListener('hashchange', () => { const s = C.decodeShare(location.hash); if (s) applyState(s); });
+}
+
 /* ============ Búsqueda de lugares ============ */
 /* Búsqueda en todo el mundo: Nominatim (OpenStreetMap) y, si falla, Photon (Komoot); ambos gratuitos y sin clave. */
 const KIND = { city: 'Ciudad', town: 'Localidad', village: 'Pueblo', hamlet: 'Aldea', suburb: 'Barrio', neighbourhood: 'Barrio', quarter: 'Barrio', locality: 'Paraje', isolated_dwelling: 'Paraje', municipality: 'Municipio', county: 'Comarca', state_district: 'Comarca', province: 'Provincia', state: 'Comunidad autónoma', region: 'Región', country: 'País',
@@ -2643,6 +3365,11 @@ enterEye = guard('enterEye', enterEye);
 useMyLocation = guard('useMyLocation', useMyLocation);
 onTimeChange = guard('onTimeChange', onTimeChange);
 onTargetChange = guard('onTargetChange', onTargetChange);
+/* Los bloques de planificación se redibujan (con un pequeño retardo) tras cualquier cambio de hora, fecha, puntos, tiempo o relieve. */
+
+[['onTimeChange', () => onTimeChange, f => { onTimeChange = f; }], ['onDateChange', () => onDateChange, f => { onDateChange = f; }], ['onTargetChange', () => onTargetChange, f => { onTargetChange = f; }],
+ ['onObserverChange', () => onObserverChange, f => { onObserverChange = f; }], ['onWeather', () => onWeather, f => { onWeather = f; }], ['onAnalysisReady', () => onAnalysisReady, f => { onAnalysisReady = f; }],
+ ['renderLos', () => renderLos, f => { renderLos = f; }]].forEach(([n, get, set]) => { const o = get(); set(function () { const r = o.apply(this, arguments); scheduleFx(); return r; }); });
 function patchMapEvents() {
   /* Cada función se envuelve UNA sola vez (WeakMap) y «off» desenvuelve: si no, MapLibre no puede quitar sus propios escuchas
      (p. ej. el arrastre de los marcadores) y los de un marcador ya soltado siguen lanzando errores en cada movimiento del ratón,
@@ -2654,11 +3381,14 @@ function patchMapEvents() {
 }
 function start() {
   S.date = C.todayIn(tz());
+  /* enlace compartido (#t=…&o=…&d=…&m=…): sustituye al estado guardado */
+  const sh = location.hash.length > 3 ? C.decodeShare(location.hash) : null;
+  if (sh) { S.target = sh.target; S.observer = sh.observer; if (sh.radius != null) S.radius = snapRadius(sh.radius); if (sh.targetH != null) S.targetH = clamp(sh.targetH, 0, 4000); if (sh.date) S.date = sh.date; }
   ensureDay();
-  S.min = clamp(Math.round(minutesOf(day.times.sunrise) + 20), 0, 1439);
-  bindUI(); initStatic(); applyLang(true);
+  S.min = sh && sh.min != null ? sh.min : clamp(Math.round(minutesOf(day.times.sunrise) + 20), 0, 1439);
+  bindUI(); bindFx(); loadPlaces(); initStatic(); applyLang(true);
   $('#tslider').value = S.min;
-  renderChips(); renderPoints(); renderSun(); renderLight(); renderWeather(); renderLos(); drawDay();
+  renderChips(); renderPoints(); renderSun(); renderLight(); renderWeather(); renderLos(); drawDay(); renderFx();
   patchMapEvents();
   initMap();
   initDiag();
