@@ -67,6 +67,11 @@ input[type=range]{width:100%;accent-color:var(--accent-strong)}
 .clock{margin-left:auto;font:500 20px/1 var(--mono);font-variant-numeric:tabular-nums}
 .clock small{font-size:11px;color:var(--ink-2);font-weight:400;margin-left:4px}
 #tslider{margin:12px 0 4px}
+.hm{display:flex;align-items:center;gap:6px;margin:2px 0 8px;font-size:13px;color:var(--ink-2)}
+.hm input[type=number]{width:60px;text-align:center;font:500 14px var(--mono)}
+.hm small{font-size:11.5px;margin-left:4px}
+.fxrow em.fac{font-size:11.5px;opacity:.95}
+.chip.now{border-color:var(--accent-strong)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
 .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer}
 .chip:hover{border-color:var(--accent-strong)}
@@ -335,6 +340,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
         <output class="clock" id="clock" for="tslider"></output>
       </div>
       <input type="range" id="tslider" min="0" max="1439" step="1" aria-label="Hora del día">
+      <div class="hm"><label for="t-h">Hora</label><input type="number" id="t-h" min="-1" max="24" step="1" inputmode="numeric" aria-label="Hora (0–23)"><span aria-hidden="true">:</span><input type="number" id="t-m" min="-1" max="60" step="1" inputmode="numeric" aria-label="Minutos (0–59)"><small>hora local del motivo</small></div>
       <div class="chips" id="chips"></div>
       <svg class="dc" id="daychart" viewBox="0 0 340 136" role="img" aria-label="Altura del Sol, luz sobre el motivo y nubosidad a lo largo del día. Arrastra para cambiar la hora."></svg>
       <div class="legend-inline">
@@ -347,9 +353,9 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     </section>
 
     <section class="sec" id="s-light"><h2>Luz estimada</h2><div id="light"></div></section>
-    <section class="sec" id="s-weather"><h2>Meteorología en el motivo</h2><div id="wx"></div>
-      <p style="margin:10px 0 0"><button class="btn" id="models-go" type="button">Comparar modelos de previsión</button></p><div id="models"></div></section>
-    <section class="sec" id="s-sun"><h2>Sol</h2><dl class="kv" id="sunkv"></dl></section>
+    <details class="sec fold" id="s-weather" open><summary>Meteorología en el motivo</summary><div class="fb"><div id="wx"></div>
+      <p style="margin:10px 0 0"><button class="btn" id="models-go" type="button">Comparar modelos de previsión</button></p><div id="models"></div></div></details>
+    <details class="sec fold" id="s-sun" open><summary>Sol</summary><div class="fb"><dl class="kv" id="sunkv"></dl></div></details>
     <details class="sec fold" id="s-windows" open><summary>Ventanas de luz</summary><div class="fb"><div id="windows"></div></div></details>
     <details class="sec fold" id="s-best"><summary>Mejor día</summary><div class="fb">
       <div class="row" style="margin-top:0"><label>Desde <input type="date" id="best-from" aria-label="Primer día"></label><label>Días <select id="best-n" aria-label="Número de días"><option value="7">7</option><option value="10">10</option><option value="16">16</option></select></label></div>
@@ -463,7 +469,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     <ol>
       <li><b>Buscar un lugar.</b> Escribe un nombre en el campo de búsqueda situado arriba del mapa (o en el del panel) y pulsa Intro. Busca <b>en todo el mundo</b>: ciudades, pueblos, comarcas, provincias, regiones, países, sierras, picos, ríos, embalses, playas… Añade el país si el nombre es ambiguo («Granada Nicaragua»). Cada resultado indica su tipo. El mapa <b>viaja</b> hasta el lugar elegido. Si es un sitio concreto (un pico, un pueblo), además coloca en él el punto activo. Si es una zona extensa (una comarca, una sierra, un río), solo encuadra el mapa para que hagas clic donde quieras.</li>
       <li><b>Motivo y posición.</b> Elige «Motivo» (lo que fotografías) o «Posición» (dónde te colocas) y haz clic en el mapa, o arrastra los marcadores. El radio y la altura del motivo ajustan el encuadre.</li>
-      <li><b>Fecha y hora.</b> Cambia el día con las flechas o el calendario y la hora con el control deslizante, arrastrando sobre la gráfica del día o con «Recorrer el día», que anima las sombras. Los botones rápidos saltan a la hora azul, el amanecer, la hora dorada, el mediodía solar y el atardecer.</li>
+      <li><b>Fecha y hora.</b> Cambia el día con las flechas o el calendario y la hora con el control deslizante, escribiéndola a mano en los campos <b>hora</b> y <b>minutos</b> (Intro o salir del campo para aplicarla), arrastrando sobre la gráfica del día o con «Recorrer el día», que anima las sombras. Los botones rápidos saltan a la hora azul, el amanecer, la hora dorada, el mediodía solar y el atardecer; el último, <b>Hora actual</b>, usa el reloj de tu dispositivo (en la zona horaria del motivo) y pone también el día de hoy.</li>
       <li><b>Leer el panel.</b> <i>Luz estimada</i> resume la calidad de la luz sobre el motivo y cómo la verás desde tu posición (a favor, en contra o de lado). <i>Meteorología</i> da nubes por altura, viento, precipitación y visibilidad. <i>Sol</i> da acimut, altura y horas clave. <i>Vista desde la posición</i> dice si el relieve tapa el motivo.</li>
       <li><b>Vista 2D / 3D.</b> El conmutador está arriba a la izquierda del mapa. En 3D, el control «Inclinación» fija el ángulo; también se inclina con el botón derecho del ratón arrastrando arriba o abajo (o Ctrl + arrastrar). «Ver desde la posición» pone la cámara en tu posición mirando al motivo; Esc o «Volver al mapa» regresa.</li>
       <li><b>Rotar el mapa</b> (en 2D y en 3D). Usa el control «Orientación», el botón derecho del ratón arrastrando hacia los lados (o Ctrl + arrastrar), o dos dedos en pantalla táctil. «Norte arriba» lo reorienta y «Mirar al motivo» lo gira hacia la dirección posición → motivo.</li>
@@ -498,7 +504,8 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     <h3>Planificación avanzada</h3>
     <p>Debajo de «Sol» y de «Vista desde la posición» hay bloques plegables (púlsalos para abrirlos). Los cálculos astronómicos se hacen en tu navegador; solo la meteorología se pide a Open-Meteo.</p>
     <ul>
-      <li><b>Ventanas de luz.</b> Las cuatro franjas del día (hora azul y hora dorada, de amanecer y de atardecer) con su horario exacto, si la luz es <b>contraluz, lateral o frontal</b> respecto a la dirección de tu cámara, qué parte del encuadre recibe Sol y una valoración del cielo (favorable, aceptable o poco favorable) según nubes, lluvia y visibilidad previstas. Pulsa una franja para ir a esa hora. Arriba aparece la mejor combinación del día.</li>
+      <li><b>Ventanas de luz.</b> Las cuatro franjas del día (hora azul y hora dorada, de amanecer y de atardecer) con su horario exacto, si la luz es <b>contraluz, lateral o frontal</b> respecto a la dirección de tu cámara, qué parte del encuadre recibe Sol y una valoración del cielo (favorable, aceptable o poco favorable) con el resumen de los elementos que la forman. Pulsa una franja para ir a esa hora. Arriba aparece la mejor combinación del día.
+        <br><b>Cómo se calcula la puntuación del cielo (0–100).</b> Se parte de 78 puntos y se suman o restan factores con la previsión a la hora central de la franja: <i>nubes bajas</i> −0,6 por cada 1 % (tapan el horizonte); <i>nubes medias y altas</i> hasta +20 (con 8–90 % de cobertura y máximo hacia el 45 %: dan color y textura al cielo); <i>cobertura total</i> −18 si el cielo está cubierto (≥ 90 %) y −4 si está totalmente despejado (&lt; 8 %); <i>lluvia</i> −50 por mm (máximo −55); <i>tiempo</i>: niebla o tormenta −30, lluvia o nieve (código ≥ 61) −12; <i>visibilidad</i> hasta −25 si baja de 10 km. El resultado se limita a 0–100: <b>70 o más favorable</b>, <b>45–69 aceptable</b>, <b>menos de 45 poco favorable</b>. Es una orientación basada en la previsión, no una garantía; en «Mejor día» se promedian tres instantes (−30, 0 y +30 min) alrededor del amanecer o atardecer.</li>
       <li><b>Mejor día.</b> Elige el primer día y cuántos (7, 10 o 16) y pulsa «Buscar el mejor día»: con una sola consulta a Open-Meteo puntúa de 0 a 100 el cielo en la salida y en la puesta del Sol de cada día (las nubes bajas restan, las medias y altas parciales suman color, y restan la lluvia, la niebla y la poca visibilidad). Las ★ marcan los mejores días; pulsa uno para verlo. Solo hay previsión hasta 15 días vista.</li>
       <li><b>Luna y Vía Láctea.</b> Fase e iluminación de la Luna, su salida y su puesta, y su altura y acimut a la hora elegida. Para la Vía Láctea calcula cuándo el <b>núcleo galáctico</b> está a más de 8° sobre el horizonte con el cielo realmente oscuro (Sol por debajo de −18°), su altura máxima, hacia dónde mirar y los tramos <b>sin Luna</b>. Si no es temporada o no hay noche cerrada, lo dice. No incluye la contaminación lumínica del lugar.</li>
       <li><b>Alineaciones Sol y Luna con el motivo.</b> Para el día elegido lista cuándo el Sol y la Luna cruzan la dirección posición → motivo y, si el relieve ya está calculado, si lo hacen a la altura de la parte alta del motivo (alineados) o por encima o por debajo. «Buscar alineaciones en el próximo año» recorre 366 días y lista los días (agrupados) en que el Sol o la Luna (con su fase) quedan a menos de 1,5° de altura de la cumbre; pulsa uno para ir a ese día y esa hora. La Luna se calcula con paralaje, imprescindible para este uso.</li>
@@ -585,7 +592,7 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     <ol>
       <li><b>Search for a place.</b> Type a name in the search box above the map (or in the one in the panel) and press Enter. It searches <b>worldwide</b>: cities, towns, districts, provinces, regions, countries, mountain ranges, peaks, rivers, reservoirs, beaches… Add the country if the name is ambiguous (“Granada Nicaragua”). Each result shows its type. The map <b>travels</b> to the chosen place. If it is a specific spot (a peak, a village) it also places the active point there. If it is a large area (a district, a mountain range, a river) it only frames the map so you can click where you want.</li>
       <li><b>Subject and position.</b> Choose “Subject” (what you photograph) or “Position” (where you stand) and click on the map, or drag the markers. The framing radius and the subject height adjust the framing area.</li>
-      <li><b>Date and time.</b> Change the day with the arrows or the calendar and the time with the slider, by dragging on the day chart, or with “Play the day”, which animates the shadows. The quick buttons jump to blue hour, sunrise, golden hour, solar noon and sunset.</li>
+      <li><b>Date and time.</b> Change the day with the arrows or the calendar and the time with the slider, by typing it in the <b>hour</b> and <b>minutes</b> fields (Enter or leaving the field applies it), by dragging on the day chart, or with “Play the day”, which animates the shadows. The quick buttons jump to blue hour, sunrise, golden hour, solar noon and sunset; the last one, <b>Current time</b>, uses your device clock (in the subject’s time zone) and also sets today’s date.</li>
       <li><b>Read the panel.</b> <i>Estimated light</i> summarises the quality of the light on the subject and how you will see it from your position (front, back or side light). <i>Weather</i> gives clouds by altitude, wind, precipitation and visibility. <i>Sun</i> gives azimuth, altitude and key times. <i>View from the position</i> tells you whether terrain blocks the subject.</li>
       <li><b>2D / 3D view.</b> The switch is at the top left of the map. In 3D, the “Tilt” control sets the angle; you can also tilt with the right mouse button dragging up or down (or Ctrl + drag). “View from the position” puts the camera at your position looking at the subject; Esc or “Back to map” returns.</li>
       <li><b>Rotate the map</b> (in 2D and 3D). Use the “Orientation” control, the right mouse button dragging sideways (or Ctrl + drag), or two fingers on a touch screen. “North up” resets it and “Face the subject” turns it towards the position → subject direction.</li>
@@ -620,7 +627,8 @@ html[lang=en] .l-es,html[lang=es] .l-en{display:none!important}
     <h3>Advanced planning</h3>
     <p>Below “Sun” and “View from the position” there are collapsible blocks (tap them to open). Astronomical calculations are done in your browser; only the weather is requested from Open-Meteo.</p>
     <ul>
-      <li><b>Light windows.</b> The four slots of the day (blue hour and golden hour, at sunrise and sunset) with exact times, whether the light is <b>backlight, side or front light</b> relative to your camera direction, how much of the frame receives Sun, and a sky rating (favourable, fair or unfavourable) from the forecast clouds, rain and visibility. Tap a slot to go to that time. The best combination of the day is shown on top.</li>
+      <li><b>Light windows.</b> The four slots of the day (blue hour and golden hour, at sunrise and sunset) with exact times, whether the light is <b>backlight, side or front light</b> relative to your camera direction, how much of the frame receives Sun, and a sky rating (favourable, fair or unfavourable) with a summary of the elements behind it. Tap a slot to go to that time. The best combination of the day is shown on top.
+        <br><b>How the sky score (0–100) is computed.</b> It starts at 78 points and adds or subtracts factors from the forecast at the middle of the slot: <i>low cloud</i> −0.6 per 1 % (hides the horizon); <i>mid and high cloud</i> up to +20 (with 8–90 % cover, peaking near 45 %: they add colour and texture); <i>total cover</i> −18 if overcast (≥ 90 %) and −4 if completely clear (&lt; 8 %); <i>rain</i> −50 per mm (max −55); <i>weather</i>: fog or thunderstorm −30, rain or snow (code ≥ 61) −12; <i>visibility</i> up to −25 below 10 km. The result is clamped to 0–100: <b>70 or more favourable</b>, <b>45–69 fair</b>, <b>below 45 unfavourable</b>. It is a forecast-based guide, not a guarantee; “Best day” averages three instants (−30, 0 and +30 min) around sunrise or sunset.</li>
       <li><b>Best day.</b> Choose the first day and how many (7, 10 or 16) and press “Find the best day”: with a single Open-Meteo request it scores the sky from 0 to 100 at each day’s sunrise and sunset (low clouds subtract, partial mid and high clouds add colour, and rain, fog and poor visibility subtract). ★ marks the best days; tap one to view it. The forecast only reaches 15 days ahead.</li>
       <li><b>Moon and Milky Way.</b> Moon phase and illumination, moonrise and moonset, and its altitude and azimuth at the chosen time. For the Milky Way it computes when the <b>galactic core</b> is more than 8° above the horizon with a truly dark sky (Sun below −18°), its maximum altitude, where to look, and the <b>Moon-free</b> periods. If it is out of season or the night never gets dark, it says so. It does not include local light pollution.</li>
       <li><b>Sun and Moon alignments with the subject.</b> For the chosen day it lists when the Sun and Moon cross the position → subject direction and, once the terrain is computed, whether they do so at the height of the top of the subject (aligned) or above or below it. “Search alignments in the next year” scans 366 days and lists the days (grouped) when the Sun or Moon (with its phase) is within 1.5° of altitude of the summit; tap one to go to that day and time. The Moon is computed with parallax, which is essential for this use.</li>
@@ -1400,22 +1408,28 @@ return maplibregl$1;
     return res;
   }
   const tri = (x, a, b, c) => x <= a || x >= c ? 0 : x < b ? (x - a) / (b - a) : (c - x) / (c - b);
-  /* Puntuación 0–100 del cielo para una foto de amanecer/atardecer a partir de la previsión (nubes bajas tapan el Sol;
-     nubes medias y altas parciales dan color; precipitación, niebla y poca visibilidad restan). */
-  function photoScore(w) {
+  /* Puntuación 0–100 del cielo para una foto de amanecer/atardecer a partir de la previsión. Se parte de 78 puntos y cada
+     factor suma o resta (devuelve el desglose para poder mostrarlo): nubes bajas −0,6 por cada 1 % (tapan el Sol);
+     nubes medias/altas hasta +20 (máximo hacia el 45 %, nada por debajo del 8 % ni por encima del 90 %); cielo cubierto
+     (total ≥ 90 %) −18 o totalmente despejado (< 8 %) −4; precipitación −50 por mm (máx. −55); niebla o tormenta −30,
+     lluvia o nieve −12; visibilidad < 10 km hasta −25. */
+  function photoBreakdown(w) {
     if (!w) return null;
     const g = (v, d) => (v == null || !isFinite(v)) ? d : v;
     const low = g(w.cloud_cover_low, 0), mid = g(w.cloud_cover_mid, 0), high = g(w.cloud_cover_high, 0), tot = g(w.cloud_cover, Math.max(low, mid, high));
-    const pr = g(w.precipitation, 0), vis = g(w.visibility, 24000), code = g(w.weather_code, 0);
-    let s = 78;
-    s -= 0.6 * low;
-    s += 20 * tri(Math.max(mid, high), 8, 45, 90);
-    if (tot >= 90) s -= 18; else if (tot < 8) s -= 4;
-    s -= Math.min(55, 50 * pr);
-    if (code === 45 || code === 48) s -= 30; else if (code >= 95) s -= 30; else if (code >= 61 && code !== 45) s -= 12;
-    if (vis < 10000) s -= (10000 - vis) / 10000 * 25;
-    return Math.round(clamp(s, 0, 100));
+    const pr = g(w.precipitation, 0), vis = g(w.visibility, 24000), code = g(w.weather_code, 0), hm = Math.max(mid, high);
+    const parts = [
+      { k: 'low', v: low, d: -0.6 * low },
+      { k: 'hm', v: hm, d: 20 * tri(hm, 8, 45, 90) },
+      { k: 'tot', v: tot, d: tot >= 90 ? -18 : tot < 8 ? -4 : 0 },
+      { k: 'rain', v: pr, d: -Math.min(55, 50 * pr) },
+      { k: 'code', v: code, d: (code === 45 || code === 48) ? -30 : code >= 95 ? -30 : code >= 61 ? -12 : 0 },
+      { k: 'vis', v: vis, d: vis < 10000 ? -(10000 - vis) / 10000 * 25 : 0 }
+    ];
+    const score = Math.round(clamp(78 + parts.reduce((a, p) => a + p.d, 0), 0, 100));
+    return { base: 78, score, parts };
   }
+  function photoScore(w) { const b = photoBreakdown(w); return b ? b.score : null; }
   /* Perfil vertical: levels = [{z (m), t (°C), rh (%), cc (%)}] (cualquier orden). Detecta inversiones térmicas
      (T sube con la altura) y la capa de nube/niebla (HR ≥ 93 % o nubosidad ≥ 65 %) frente a la altura del motivo zT.
      verdict: 'inside' (el motivo está dentro de la capa: niebla), 'sea' (techo de la capa bajo el motivo con cielo
@@ -1494,7 +1508,7 @@ return maplibregl$1;
     slopeAspect, sunVec, dot, losProfile,
     fbm, noiseCdf, sampleGrid, renderClouds, renderRain,
     moonPosition, moonIllumination, galacticCenterPosition, moonTimes, milkyWayWindows, lightWindows, azCrossings, findAlignments,
-    photoScore, inversionProfile, encodeShare, decodeShare, sanitizePlaces
+    photoScore, photoBreakdown, inversionProfile, encodeShare, decodeShare, sanitizePlaces
   };
 });
 
@@ -1595,6 +1609,7 @@ const EN_STATIC = {
   'Idioma / Language': 'Language / Idioma',
   'Localizaciones y enlace': 'Saved places and link', 'Ventanas de luz': 'Light windows', 'Mejor día': 'Best day', 'Luna y Vía Láctea': 'Moon and Milky Way',
   'Alineaciones Sol y Luna con el motivo': 'Sun and Moon alignments with the subject', 'Niebla, nieve y aire': 'Fog, snow and air',
+  'Hora': 'Hour', 'Hora (0–23)': 'Hour (0–23)', 'Minutos (0–59)': 'Minutes (0–59)', 'hora local del motivo': 'local time at the subject',
   'Desde': 'From', 'Días': 'Days', 'Primer día': 'First day', 'Número de días': 'Number of days', 'Buscar el mejor día': 'Find the best day',
   'Buscar alineaciones en el próximo año': 'Search alignments in the next year', 'Comparar modelos de previsión': 'Compare forecast models',
   'Guardar': 'Save', 'Exportar': 'Export', 'Importar': 'Import', 'Copiar enlace': 'Copy link', 'Abrir': 'Open', 'Incluir fecha y hora': 'Include date and time',
@@ -2582,6 +2597,15 @@ function renderPoints() {
   }
   $('#pts').innerHTML = html;
 }
+function syncHM() {
+  const h = $('#t-h'), m = $('#t-m'); if (!h || document.activeElement === h || document.activeElement === m) return;
+  const t = Math.round(S.min); h.value = Math.floor(t / 60); m.value = String(t % 60).padStart(2, '0');
+}
+function setHM() {
+  const hv = $('#t-h').value, mv = $('#t-m').value;
+  if (hv === '' || mv === '' || !isFinite(+hv) || !isFinite(+mv)) { syncHM(); return; }
+  S.min = clamp(Math.floor(+hv) * 60 + Math.floor(+mv), 0, 1439); $('#t-h').blur(); $('#t-m').blur(); syncTime();
+}
 function renderSun() {
   const t = S.target, c = cur(), tm = day.times, z = tz();
   const f = ms => C.fmtTime(ms, z);
@@ -2596,6 +2620,7 @@ function renderSun() {
     <dt>${tr('Duración del día', 'Day length')}</dt><dd>${isFinite(dur) ? Math.floor(dur / 60) + ' h ' + String(Math.round(dur % 60)).padStart(2, '0') + ' min' : '—'}</dd>`;
   $('#clock').innerHTML = $('#clock2').innerHTML = `${hhmm(S.min)}<small>${esc(tzAbbr(c.ms, z))}</small>`;
   $('#tslider2').value = S.min;
+  syncHM();
 }
 function renderChips() {
   const tm = day.times, f = (a, b) => (isFinite(a) && isFinite(b)) ? minutesOf((a + b) / 2) : NaN;
@@ -2609,7 +2634,15 @@ function renderChips() {
     b.addEventListener('click', () => { S.min = clamp(Math.round(m), 0, 1439); syncTime(); });
     box.appendChild(b);
   });
+  const nb = document.createElement('button'); nb.type = 'button'; nb.className = 'chip now'; nb.id = 'chip-now'; nb.title = tr('Usa la hora de tu dispositivo (en la zona horaria del motivo) y el día de hoy', 'Uses your device clock (in the subject’s time zone) and today’s date');
+  nb.addEventListener('click', goNow); box.appendChild(nb); updateNowChip();
 }
+function updateNowChip() { const b = $('#chip-now'); if (b) b.innerHTML = `${tr('Hora actual', 'Current time')}<span class="mono">${hhmm(minutesOf(Date.now()))}</span>`; }
+function goNow() {
+  const d = C.todayIn(tz()); if (S.date !== d) { S.date = d; $('#date').value = d; onDateChange(); }
+  S.min = clamp(Math.round(minutesOf(Date.now())), 0, 1439); syncTime();
+}
+setInterval(updateNowChip, 20000);
 function drawDay() {
   const svg = $('#daychart'), W = 340, Lm = 40, Rm = 6, pw = W - Lm - Rm;
   const X = m => Lm + pw * m / 1440;
@@ -2821,6 +2854,16 @@ function setDateMin(date, min) {
   if (date && date !== S.date && C.parseDate(date)) { S.date = date; $('#date').value = date; onDateChange(); }
   if (min != null) { S.min = clamp(Math.round(min), 0, 1439); syncTime(); }
 }
+const FAC_ES = { low: 'nubes bajas', hm: 'nubes medias/altas', tot: 'cobertura total', rain: 'lluvia', code: 'tiempo', vis: 'visibilidad' };
+const FAC_EN = { low: 'low cloud', hm: 'mid/high cloud', tot: 'total cover', rain: 'rain', code: 'weather', vis: 'visibility' };
+function skyFactors(b) {
+  if (!b) return '';
+  const sg = d => (d >= 0 ? '+' : '−') + nf(Math.abs(d), 0), name = (LANG === 'en' ? FAC_EN : FAC_ES);
+  const val = p => p.k === 'rain' ? nf(p.v, 1) + ' mm' : p.k === 'vis' ? (p.v >= 10000 ? nf(p.v / 1000, 0) : nf(p.v / 1000, 1)) + ' km'
+    : p.k === 'code' ? ((LANG === 'en' ? WCODE_EN : WCODE)[p.v] || p.v) : p.k === 'tot' ? nf(p.v, 0) + ' %' + (p.v >= 90 ? ' (' + tr('cubierto', 'overcast') + ')' : p.v < 8 ? ' (' + tr('despejado', 'clear') + ')' : '') : nf(p.v, 0) + ' %';
+  const shown = b.parts.filter(p => p.k === 'low' || p.k === 'hm' || p.k === 'tot' || p.k === 'rain' || p.k === 'vis' || Math.abs(p.d) >= 0.5);
+  return `${tr('Puntuación', 'Score')} <b>${b.score}</b>/100 = ${b.base} ${tr('base', 'base')} · ` + shown.map(p => `${name[p.k]} ${val(p)} (${Math.abs(p.d) < 0.5 ? '0' : sg(p.d)})`).join(' · ');
+}
 const skyTxt = sc => sc == null ? '' : sc >= 70 ? `<span class="good">${tr('cielo favorable', 'favourable sky')}</span>` : sc >= 45 ? `<span class="warn">${tr('cielo aceptable', 'fair sky')}</span>` : `<span class="bad">${tr('cielo poco favorable', 'unfavourable sky')}</span>`;
 
 /* ---- 1. Ventanas de luz del día ---- */
@@ -2829,10 +2872,10 @@ function renderWindows() {
   if (!W.length) { box.innerHTML = fxNote(tr('Este día no hay hora azul ni dorada en esta latitud (Sol de medianoche o noche polar).', 'There is no blue or golden hour on this day at this latitude (midnight Sun or polar night).')); return; }
   const rel = { contra: tr('contraluz', 'backlight'), lateral: tr('luz lateral', 'side light'), frontal: tr('luz frontal', 'front light') };
   const rows = W.map(w => {
-    const mid = (w.from + w.to) / 2, mm = minutesOf(mid), sc = C.photoScore(wxAt(mm)), li = day.lit[Math.min(143, Math.floor(mm / 10))];
+    const mid = (w.from + w.to) / 2, mm = minutesOf(mid), bd = C.photoBreakdown(wxAt(mm)), sc = bd ? bd.score : null, li = day.lit[Math.min(143, Math.floor(mm / 10))];
     const t = (w.kind === 'blue' ? tr('Hora azul', 'Blue hour') : tr('Hora dorada', 'Golden hour')) + ' · ' + (w.am ? tr('amanecer', 'sunrise') : tr('atardecer', 'sunset'));
     const bits = [w.rel ? rel[w.rel] : null, w.kind === 'golden' && li >= 0 ? tr(`Sol en el ${Math.round(li * 100)} % del encuadre`, `Sun on ${Math.round(li * 100)} % of the frame`) : null, skyTxt(sc)].filter(Boolean);
-    return { w, sc, html: `<button type="button" class="fxrow" data-min="${Math.round(mm)}"><b>${t}</b><span class="mono">${fxT(w.from)}–${fxT(w.to)}</span><em>${bits.join(' · ') || '&nbsp;'}</em></button>` };
+    return { w, sc, html: `<button type="button" class="fxrow" data-min="${Math.round(mm)}"><b>${t}</b><span class="mono">${fxT(w.from)}–${fxT(w.to)}</span><em>${bits.join(' · ') || '&nbsp;'}</em>${bd ? `<em class="fac">${skyFactors(bd)}</em>` : ''}</button>` };
   });
   let best = null; rows.forEach(r => { if (r.sc != null && r.w.kind === 'golden') { const v = r.sc + (r.w.rel === 'lateral' ? 6 : 0); if (!best || v > best.v) best = { v, r }; } });
   const lead = best && best.r.sc >= 45 ? `<p class="note" style="margin:0 0 6px">${tr('Mejor combinación del día', 'Best of the day')}: <b>${(best.r.w.am ? tr('hora dorada del amanecer', 'sunrise golden hour') : tr('hora dorada del atardecer', 'sunset golden hour'))}</b> (${fxT(best.r.w.from)}–${fxT(best.r.w.to)}).</p>` : '';
@@ -3283,6 +3326,7 @@ function bindUI() {
   $('#d-prev').onclick = () => { S.date = C.addDays(S.date, -1); $('#date').value = S.date; onDateChange(); };
   $('#d-next').onclick = () => { S.date = C.addDays(S.date, 1); $('#date').value = S.date; onDateChange(); };
   $('#tslider').oninput = e => { S.min = +e.target.value; onTimeChange(); };
+  ['#t-h', '#t-m'].forEach(q => { $(q).addEventListener('change', setHM); $(q).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); setHM(); } }); });
   $('#tslider2').oninput = e => { S.min = +e.target.value; $('#tslider').value = S.min; onTimeChange(); };
   /* móvil: controles de vista plegables, ubicación, leyenda y hoja inferior */
   $('#viewmore').onclick = () => { const v = document.querySelector('.viewctl'); v.classList.toggle('open'); $('#viewmore').setAttribute('aria-expanded', String(v.classList.contains('open'))); };
